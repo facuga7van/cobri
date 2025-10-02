@@ -5,11 +5,15 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { auth, db } from "@/lib/firebase"
+import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
+import { GoogleLoginButton } from "@/components/google-login-button"
 
 export default function SignInPage() {
   const router = useRouter()
@@ -17,19 +21,64 @@ export default function SignInPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const [oauthLoading, setOauthLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
-    // Stub Firebase Auth
-    setTimeout(() => {
-      toast({
-        title: "Sign in successful",
-        description: "Redirecting to dashboard...",
-      })
-      router.push("/app")
-    }, 1000)
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, password)
+      const user = cred.user
+      const userRef = doc(db, 'users', user.uid)
+      const snap = await getDoc(userRef)
+      const base = {
+        uid: user.uid,
+        email: user.email ?? '',
+        displayName: user.displayName ?? '',
+        photoURL: user.photoURL ?? '',
+        providerId: user.providerData?.[0]?.providerId ?? 'password',
+        emailVerified: user.emailVerified ?? false,
+        lastLoginAt: serverTimestamp(),
+      }
+      const payload = snap.exists() ? base : { ...base, createdAt: serverTimestamp() }
+      await setDoc(userRef, payload, { merge: true })
+      toast({ title: "Sign in successful", description: "Redirecting to dashboard..." })
+      router.push("../")
+    } catch (err: any) {
+      toast({ title: "Error", description: err?.message ?? "Sign in failed" })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setOauthLoading(true)
+      const provider = new GoogleAuthProvider()
+      provider.setCustomParameters({ prompt: 'select_account' })
+      const cred = await signInWithPopup(auth, provider)
+      const user = cred.user
+      const userRef = doc(db, 'users', user.uid)
+      const snap = await getDoc(userRef)
+      const base = {
+        uid: user.uid,
+        email: user.email ?? '',
+        displayName: user.displayName ?? '',
+        photoURL: user.photoURL ?? '',
+        providerId: user.providerData?.[0]?.providerId ?? 'google',
+        emailVerified: user.emailVerified ?? false,
+        lastLoginAt: serverTimestamp(),
+      }
+      const payload = snap.exists() ? base : { ...base, createdAt: serverTimestamp() }
+      await setDoc(userRef, payload, { merge: true })
+      toast({ title: "Sign in successful", description: "Redirecting to dashboard..." })
+      router.push("../")
+    } catch (err: any) {
+      toast({ title: "Error", description: err?.message ?? "Google sign in failed" })
+    } finally {
+      setOauthLoading(false)
+    }
   }
 
   return (
@@ -73,6 +122,16 @@ export default function SignInPage() {
             {loading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
+
+        <div className="my-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-sm text-muted-foreground">
+          <span className="h-px bg-border" />
+          <span>or</span>
+          <span className="h-px bg-border" />
+        </div>
+
+        <div className="w-full flex justify-center">
+          <GoogleLoginButton />
+        </div>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
           Don't have an account?{" "}

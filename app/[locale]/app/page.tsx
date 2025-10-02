@@ -1,38 +1,132 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import { useLocale, useTranslations } from "next-intl"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { NewSubscriptionDialog } from "@/components/new-subscription-dialog"
 import { StatusBadge } from "@/components/status-badge"
 import { IconSearch, IconPlus, IconChevronRight } from "@tabler/icons-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { mockSubscriptions } from "@/lib/mock-data"
+import { useAuth } from "@/components/auth-provider"
+import { db } from "@/lib/firebase"
+import { collection, getDocs, onSnapshot, orderBy, query } from "firebase/firestore"
+import { useRouter } from "next/navigation"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { doc, updateDoc, addDoc, serverTimestamp } from "firebase/firestore"
 
 export default function SubscriptionsPage() {
+  const locale = useLocale()
+  const t = useTranslations('subscriptions')
+  const tCommon = useTranslations('common')
+  const { user } = useAuth()
+  const router = useRouter()
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
+  type RowStatus = "authorized" | "paused" | "cancelled" | "pending"
+  const [rows, setRows] = useState<Array<{
+    id: string
+    customerName: string
+    email: string
+    plan: string
+    price: number
+    billingCycle: string
+    status: RowStatus
+    lastPayment?: string | null
+    nextPayment?: string | null
+  }>>([])
 
-  const filteredSubscriptions = mockSubscriptions.filter((sub) => {
-    const matchesSearch =
-      sub.customerName.toLowerCase().includes(search.toLowerCase()) ||
-      sub.email.toLowerCase().includes(search.toLowerCase())
-    const matchesStatus = statusFilter === "all" || sub.status === statusFilter
-    return matchesSearch && matchesStatus
-  })
+  useEffect(() => {
+    if (!user) return
+
+    const customerMap = new Map<string, { name: string; email: string }>()
+
+    const unsubCustomers = onSnapshot(collection(db, 'users', user.uid, 'customers'), (snap) => {
+      customerMap.clear()
+      snap.forEach((d) => {
+        const data = d.data() as any
+        customerMap.set(d.id, { name: data.name ?? '', email: data.email ?? '' })
+      })
+    })
+
+    const subsQ = query(collection(db, 'users', user.uid, 'subscriptions'), orderBy('createdAt', 'desc'))
+    const unsubSubs = onSnapshot(subsQ, (snap) => {
+      const list: Array<any> = []
+      const fmt = (v: any) => {
+        if (!v) return null
+        if (typeof v?.toDate === 'function') {
+          const d = v.toDate(); return isNaN(d.getTime()) ? null : d.toLocaleDateString()
+        }
+        if (typeof v?.seconds === 'number') {
+          const d = new Date(v.seconds * 1000); return isNaN(d.getTime()) ? null : d.toLocaleDateString()
+        }
+        const d = new Date(v); return isNaN(d.getTime()) ? null : d.toLocaleDateString()
+      }
+      snap.forEach((d) => {
+        const s = d.data() as any
+        const cust = customerMap.get(s.customerId ?? '')
+        list.push({
+          id: d.id,
+          customerName: cust?.name ?? '—',
+          email: cust?.email ?? '—',
+          plan: s.plan ?? '',
+          price: typeof s.price === 'number' ? s.price : Number(s.price ?? 0),
+          billingCycle: s.billingCycle ?? 'monthly',
+          status: (['authorized','paused','cancelled','pending'].includes(s.status) ? s.status : 'authorized') as RowStatus,
+          lastPayment: fmt(s.lastPayment),
+          nextPayment: fmt(s.nextPayment),
+        })
+      })
+      setRows(list)
+    })
+
+    return () => { unsubCustomers(); unsubSubs() }
+  }, [user])
+
+  const filteredSubscriptions = useMemo(() => {
+    const term = search.toLowerCase()
+    return rows.filter((sub) => {
+      const matchesSearch = sub.customerName.toLowerCase().includes(term) || sub.email.toLowerCase().includes(term)
+      const matchesStatus = statusFilter === 'all' || sub.status === statusFilter
+      return matchesSearch && matchesStatus
+    })
+  }, [rows, search, statusFilter])
+
+  async function handleMarkPaid(row: typeof rows[number]) {
+    if (!user) return
+    const subRef = doc(db, 'users', user.uid, 'subscriptions', row.id)
+    // Calculate new next payment from current nextPayment or today
+    const now = new Date()
+    const base = row.nextPayment ? new Date(row.nextPayment) : now
+    const next = new Date(base)
+    if (row.billingCycle === 'yearly') {
+      next.setFullYear(next.getFullYear() + 1)
+    } else {
+      next.setMonth(next.getMonth() + 1)
+    }
+    await addDoc(collection(db, 'users', user.uid, 'subscriptions', row.id, 'payments'), {
+      paidAt: serverTimestamp(),
+      amount: row.price ?? null,
+      coveredUntil: base,
+    })
+    await updateDoc(subRef, {
+      lastPayment: serverTimestamp(),
+      nextPayment: next,
+    })
+    // Optimistic UI update
+    setRows((prev) => prev.map((r) => r.id === row.id ? { ...r, lastPayment: new Date().toLocaleDateString(), nextPayment: next.toLocaleDateString() } : r))
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Subscriptions</h1>
-          <p className="text-muted-foreground">Manage all your recurring subscriptions</p>
+          <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('description')}</p>
         </div>
-        <Button>
-          <IconPlus className="h-4 w-4 mr-2" />
-          Add Subscription
-        </Button>
+        <NewSubscriptionDialog />
       </div>
 
       {/* Filters */}
@@ -41,7 +135,7 @@ export default function SubscriptionsPage() {
           <div className="flex-1 relative">
             <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name or email..."
+              placeholder={t('searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10"
@@ -49,14 +143,14 @@ export default function SubscriptionsPage() {
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder={t('filterByStatus')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="authorized">Active</SelectItem>
-              <SelectItem value="paused">Paused</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="all">{t('allStatuses')}</SelectItem>
+              <SelectItem value="authorized">{t('active')}</SelectItem>
+              <SelectItem value="paused">{t('paused')}</SelectItem>
+              <SelectItem value="cancelled">{t('cancelled')}</SelectItem>
+              <SelectItem value="pending">{t('pending')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -68,17 +162,20 @@ export default function SubscriptionsPage() {
           <table className="w-full">
             <thead className="border-b border-border">
               <tr>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Customer</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Plan</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Last Payment</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Next Payment</th>
-                <th className="text-right p-4 text-sm font-medium text-muted-foreground">Actions</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('tableCustomer')}</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('tablePlan')}</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('status')}</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('lastPayment')}</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('nextPayment')}</th>
+                <th className="text-right p-4 text-sm font-medium text-muted-foreground">{t('actions')}</th>
               </tr>
             </thead>
             <tbody>
               {filteredSubscriptions.map((sub) => (
-                <tr key={sub.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
+                <tr
+                  key={sub.id}
+                  className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer"
+                >
                   <td className="p-4">
                     <div>
                       <p className="font-medium">{sub.customerName}</p>
@@ -88,7 +185,7 @@ export default function SubscriptionsPage() {
                   <td className="p-4">
                     <div>
                       <p className="font-medium">{sub.plan}</p>
-                      <p className="text-sm text-muted-foreground">${sub.amount}/mo</p>
+                      <p className="text-sm text-muted-foreground">${sub.price}/{sub.billingCycle === 'yearly' ? 'yr' : 'mo'}</p>
                     </div>
                   </td>
                   <td className="p-4">
@@ -96,12 +193,30 @@ export default function SubscriptionsPage() {
                   </td>
                   <td className="p-4 text-sm">{sub.lastPayment}</td>
                   <td className="p-4 text-sm">{sub.nextPayment}</td>
-                  <td className="p-4 text-right">
-                    <Link href={`/app/subscriptions/${sub.id}`}>
-                      <Button variant="ghost" size="sm">
-                        <IconChevronRight className="h-4 w-4" />
-                      </Button>
-                    </Link>
+                  <td
+                    className="p-4 text-right"
+                    onClick={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onPointerDown={(e) => e.stopPropagation()}
+                  >
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => e.stopPropagation()}
+                          onMouseDown={(e) => e.stopPropagation()}
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onKeyDown={(e) => e.stopPropagation()}
+                        >
+                          <IconChevronRight className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => router.push(`/${locale}/subscriptions/${sub.id}`)}>{tCommon('details') ?? 'Details'}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleMarkPaid(sub)}>{t('markPaid')}</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </td>
                 </tr>
               ))}

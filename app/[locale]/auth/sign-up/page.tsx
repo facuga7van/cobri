@@ -5,6 +5,9 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
+import { auth, db } from "@/lib/firebase"
+import { doc, setDoc, serverTimestamp } from "firebase/firestore"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -22,15 +25,25 @@ export default function SignUpPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-
-    // Stub Firebase Auth
-    setTimeout(() => {
-      toast({
-        title: "Account created",
-        description: "Welcome to Cobri! Starting your free trial...",
-      })
-      router.push("/app")
-    }, 1000)
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, password)
+      if (name) {
+        await updateProfile(cred.user, { displayName: name })
+      }
+      await setDoc(doc(db, 'users', cred.user.uid), {
+        email,
+        displayName: name,
+        createdAt: serverTimestamp(),
+        lastLoginAt: serverTimestamp(),
+        theme: null,
+      }, { merge: true })
+      toast({ title: "Account created", description: "Welcome to Cobri! Starting your free trial..." })
+      router.push("../")
+    } catch (err: any) {
+      toast({ title: "Error", description: err?.message ?? "Sign up failed" })
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -88,7 +101,7 @@ export default function SignUpPage() {
 
         <p className="text-center text-sm text-muted-foreground mt-6">
           Already have an account?{" "}
-          <Link href="/auth/sign-in" className="text-primary hover:underline">
+          <Link href="../sign-in" className="text-primary hover:underline">
             Sign in
           </Link>
         </p>

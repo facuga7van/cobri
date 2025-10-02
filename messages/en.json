@@ -15,7 +15,8 @@
     "close": "Close",
     "confirm": "Confirm",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "details": "Details"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -53,29 +54,50 @@
   },
   "subscriptions": {
     "title": "Subscriptions",
+    "description": "Manage all your recurring subscriptions",
     "addSubscription": "Add Subscription",
     "subscriptionName": "Subscription Name",
     "price": "Price",
     "billingCycle": "Billing Cycle",
+    "chargeDate": "Charge date",
+    "selectDate": "Select date",
     "nextBilling": "Next Billing",
     "status": "Status",
+    "searchPlaceholder": "Search by name or email...",
+    "filterByStatus": "Filter by status",
+    "allStatuses": "All Statuses",
+    "lastPayment": "Last Payment",
+    "nextPayment": "Next Payment",
+    "actions": "Actions",
+    "tableCustomer": "Customer",
+    "tablePlan": "Plan",
     "active": "Active",
     "cancelled": "Cancelled",
     "paused": "Paused",
     "monthly": "Monthly",
     "yearly": "Yearly",
     "weekly": "Weekly",
-    "daily": "Daily"
+    "daily": "Daily",
+    "pending": "Pending",
+    "notFound": "Subscription not found",
+    "customerInfo": "Customer Information",
+    "subscriptionDetails": "Subscription Details",
+    "markPaid": "Mark as Paid",
+    "paidSaved": "Payment recorded"
   },
   "customers": {
     "title": "Customers",
+    "manageDescription": "Manage your customer base",
     "addCustomer": "Add Customer",
     "customerName": "Customer Name",
     "email": "Email",
     "phone": "Phone",
     "joinDate": "Join Date",
     "totalSpent": "Total Spent",
-    "subscriptions": "Subscriptions"
+    "totalValue": "Total value",
+    "subscriptions": "Subscriptions",
+    "searchCustomersPlaceholder": "Search customers...",
+    "customerCreated": "Customer created"
   },
   "settings": {
     "title": "Settings",
@@ -89,7 +111,8 @@
     "timezone": "Timezone"
   },
   "pricing": {
-    "title": "Pricing",
+    "title": "Simple, Transparent Pricing",
+    "onePlan": "One plan with everything you need",
     "free": "Free",
     "pro": "Pro",
     "enterprise": "Enterprise",
@@ -97,6 +120,16 @@
     "yearly": "Yearly",
     "getStarted": "Get Started",
     "contactSales": "Contact Sales",
-    "mostPopular": "Most Popular"
+    "mostPopular": "Most Popular",
+    "billedMonthly": "Billed monthly, cancel anytime",
+    "unlimitedSubscriptions": "Unlimited subscriptions",
+    "customerManagement": "Customer management",
+    "revenueTracking": "Revenue tracking & charts",
+    "statusMonitoring": "Status monitoring (active, paused, cancelled)",
+    "emailNotifications": "Email notifications",
+    "mpIntegration": "MercadoPago integration",
+    "freeTrial": "14-day free trial",
+    "prioritySupport": "Priority support",
+    "noCard": "No credit card required for trial"
   }
 }

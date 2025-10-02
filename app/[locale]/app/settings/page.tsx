@@ -26,7 +26,7 @@ export default function SettingsPage() {
         <TabsList>
           <TabsTrigger value="account">{t('account')}</TabsTrigger>
           <TabsTrigger value="notifications">{t('notifications')}</TabsTrigger>
-          <TabsTrigger value="payments">{t('billing')}</TabsTrigger>
+          {/* <TabsTrigger value="payments">{t('billing')}</TabsTrigger> */}
         </TabsList>
 
         <TabsContent value="account" className="space-y-4">
@@ -90,6 +90,7 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
+        {/*
         <TabsContent value="payments" className="space-y-4">
           <Card className="p-6">
             <h2 className="text-lg font-semibold mb-4">Payment Integration</h2>
@@ -112,6 +113,7 @@ export default function SettingsPage() {
             </div>
           </Card>
         </TabsContent>
+        */}
       </Tabs>
     </div>
   )

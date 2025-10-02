@@ -15,7 +15,8 @@
     "close": "Cerrar",
     "confirm": "Confirmar",
     "yes": "Sí",
-    "no": "No"
+    "no": "No",
+    "details": "Detalles"
   },
   "navigation": {
     "dashboard": "Panel",
@@ -52,30 +53,56 @@
     "churnRate": "Tasa de Abandono"
   },
   "subscriptions": {
+    "notFound": "Suscripción no encontrada",
+    "customerInfo": "Información del cliente",
+    "subscriptionDetails": "Detalles de la suscripción",
+    "markPaid": "Pagado",
+    "paidSaved": "Pago registrado",
     "title": "Suscripciones",
+    "description": "Gestiona todas tus suscripciones recurrentes",
     "addSubscription": "Agregar Suscripción",
+    "existingCustomer": "Cliente existente",
+    "createNewCustomer": "Crear nuevo cliente",
+    "selectCustomer": "Selecciona un cliente",
+    "createdTitle": "Suscripción creada",
+    "createdDesc": "La suscripción se creó correctamente",
     "subscriptionName": "Nombre de la Suscripción",
     "price": "Precio",
     "billingCycle": "Ciclo de Facturación",
+    "chargeDate": "Fecha de cobro",
+    "selectDate": "Seleccionar fecha",
     "nextBilling": "Próxima Facturación",
     "status": "Estado",
+    "searchPlaceholder": "Buscar por nombre o email...",
+    "filterByStatus": "Filtrar por estado",
+    "allStatuses": "Todos los estados",
+    "lastPayment": "Último pago",
+    "nextPayment": "Próximo pago",
+    "actions": "Acciones",
+    "tableCustomer": "Cliente",
+    "tablePlan": "Plan",
     "active": "Activa",
     "cancelled": "Cancelada",
     "paused": "Pausada",
     "monthly": "Mensual",
     "yearly": "Anual",
     "weekly": "Semanal",
-    "daily": "Diario"
+    "daily": "Diario",
+    "pending": "Pendiente"
   },
   "customers": {
     "title": "Clientes",
+    "manageDescription": "Gestiona tu base de clientes",
     "addCustomer": "Agregar Cliente",
     "customerName": "Nombre del Cliente",
     "email": "Correo Electrónico",
     "phone": "Teléfono",
     "joinDate": "Fecha de Registro",
     "totalSpent": "Total Gastado",
-    "subscriptions": "Suscripciones"
+    "totalValue": "Valor total",
+    "subscriptions": "Suscripciones",
+    "searchCustomersPlaceholder": "Buscar clientes...",
+    "customerCreated": "Cliente creado"
   },
   "settings": {
     "title": "Configuración",
@@ -89,7 +116,8 @@
     "timezone": "Zona Horaria"
   },
   "pricing": {
-    "title": "Precios",
+    "title": "Precios simples y transparentes",
+    "onePlan": "Un plan con todo lo que necesitas",
     "free": "Gratis",
     "pro": "Pro",
     "enterprise": "Empresa",
@@ -97,6 +125,16 @@
     "yearly": "Anual",
     "getStarted": "Comenzar",
     "contactSales": "Contactar Ventas",
-    "mostPopular": "Más Popular"
+    "mostPopular": "Más Popular",
+    "billedMonthly": "Facturación mensual, cancela cuando quieras",
+    "unlimitedSubscriptions": "Suscripciones ilimitadas",
+    "customerManagement": "Gestión de clientes",
+    "revenueTracking": "Seguimiento de ingresos y gráficos",
+    "statusMonitoring": "Monitoreo de estado (activa, pausada, cancelada)",
+    "emailNotifications": "Notificaciones por email",
+    "mpIntegration": "Integración con MercadoPago",
+    "freeTrial": "Prueba gratuita de 14 días",
+    "prioritySupport": "Soporte prioritario",
+    "noCard": "No se requiere tarjeta de crédito para la prueba"
   }
 }

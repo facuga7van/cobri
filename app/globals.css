@@ -37,7 +37,7 @@
   --sidebar-foreground: oklch(0.08 0 0);
   --sidebar-primary: oklch(0.52 0.12 240);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.95 0 0);
+  --sidebar-accent: oklch(0.92 0 0);
   --sidebar-accent-foreground: oklch(0.08 0 0);
   --sidebar-border: oklch(0.9 0 0);
   --sidebar-ring: oklch(0.52 0.12 240);
@@ -45,9 +45,9 @@
 
 .dark {
   /* Dark theme for Cobri with brand colors */
-  --background: oklch(0.08 0 0);
+  --background: #0e0e10;
   --foreground: oklch(0.98 0 0);
-  --card: oklch(0.12 0 0);
+  --card: #18181b;
   --card-foreground: oklch(0.98 0 0);
   --popover: oklch(0.12 0 0);
   --popover-foreground: oklch(0.98 0 0);
@@ -62,7 +62,7 @@
   --destructive: oklch(0.65 0.15 15);
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(0.22 0 0);
-  --input: oklch(0.22 0 0);
+  --input: #313138;
   --ring: oklch(0.52 0.12 240);
   --success: oklch(0.65 0.12 160);
   --warning: oklch(0.75 0.15 80);
@@ -73,11 +73,11 @@
   --chart-4: oklch(0.65 0.15 15);
   --chart-5: oklch(0.65 0.15 230);
   --radius: 0.5rem;
-  --sidebar: oklch(0.1 0 0);
+  --sidebar: #0e0e10;
   --sidebar-foreground: oklch(0.98 0 0);
   --sidebar-primary: oklch(0.52 0.12 240);
   --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.18 0 0);
+  --sidebar-accent: #18181b;
   --sidebar-accent-foreground: oklch(0.98 0 0);
   --sidebar-border: oklch(0.22 0 0);
   --sidebar-ring: oklch(0.52 0.12 240);

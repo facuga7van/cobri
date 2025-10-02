@@ -1,33 +1,49 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { useTranslations } from "next-intl"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { IconSearch, IconPlus } from "@tabler/icons-react"
-import { mockCustomers } from "@/lib/mock-data"
+import { useAuth } from "@/components/auth-provider"
+import { db } from "@/lib/firebase"
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore"
+import { NewCustomerDialog } from "@/components/new-customer-dialog"
 
 export default function CustomersPage() {
   const [search, setSearch] = useState("")
+  const t = useTranslations('customers')
+  const { user } = useAuth()
+  const [rows, setRows] = useState<Array<{ id: string; name: string; email: string; subscriptions?: number; totalValue?: number }>>([])
 
-  const filteredCustomers = mockCustomers.filter(
-    (customer) =>
-      customer.name.toLowerCase().includes(search.toLowerCase()) ||
-      customer.email.toLowerCase().includes(search.toLowerCase()),
-  )
+  useEffect(() => {
+    if (!user) return
+    const q = query(collection(db, 'users', user.uid, 'customers'), orderBy('createdAt', 'desc'))
+    const unsub = onSnapshot(q, (snap) => {
+      const list: Array<any> = []
+      snap.forEach((d) => {
+        const data = d.data() as any
+        list.push({ id: d.id, name: data.name ?? '', email: data.email ?? '', subscriptions: data.subscriptions ?? 0, totalValue: data.totalValue ?? 0 })
+      })
+      setRows(list)
+    })
+    return () => unsub()
+  }, [user])
+
+  const filteredCustomers = useMemo(() => rows.filter(
+    (c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.email.toLowerCase().includes(search.toLowerCase())
+  ), [rows, search])
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Customers</h1>
-          <p className="text-muted-foreground">Manage your customer base</p>
+          <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('manageDescription')}</p>
         </div>
-        <Button>
-          <IconPlus className="h-4 w-4 mr-2" />
-          Add Customer
-        </Button>
+        <NewCustomerDialog />
       </div>
 
       {/* Search */}
@@ -35,7 +51,7 @@ export default function CustomersPage() {
         <div className="relative">
           <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search customers..."
+            placeholder={t('searchCustomersPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
@@ -61,12 +77,12 @@ export default function CustomersPage() {
                 <p className="text-sm text-muted-foreground truncate">{customer.email}</p>
                 <div className="mt-3 flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-muted-foreground">Subscriptions</p>
-                    <p className="text-sm font-medium">{customer.subscriptions}</p>
+                    <p className="text-xs text-muted-foreground">{t('subscriptions')}</p>
+                    <p className="text-sm font-medium">{customer.subscriptions ?? 0}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Total Value</p>
-                    <p className="text-sm font-medium">${customer.totalValue}/mo</p>
+                    <p className="text-xs text-muted-foreground">{t('totalValue')}</p>
+                    <p className="text-sm font-medium">${customer.totalValue ?? 0}/mo</p>
                   </div>
                 </div>
               </div>

@@ -2,8 +2,10 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { IconCheck } from "@tabler/icons-react"
+import { useTranslations } from "next-intl"
 
 export default function PricingPage() {
+  const t = useTranslations('pricing')
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -27,30 +29,21 @@ export default function PricingPage() {
 
       <div className="container mx-auto px-4 py-20">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h1>
-          <p className="text-xl text-muted-foreground">One plan with everything you need</p>
+          <h1 className="text-4xl font-bold mb-4">{t('title')}</h1>
+          <p className="text-xl text-muted-foreground">{t('onePlan')}</p>
         </div>
 
         <Card className="max-w-lg mx-auto p-8">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold mb-2">Pro Plan</h2>
+            <h2 className="text-2xl font-bold mb-2">Pro</h2>
             <div className="text-5xl font-bold mb-2">
               $5<span className="text-xl text-muted-foreground">/month</span>
             </div>
-            <p className="text-muted-foreground">Billed monthly, cancel anytime</p>
+            <p className="text-muted-foreground">{t('billedMonthly')}</p>
           </div>
 
           <div className="space-y-3 mb-8">
-            {[
-              "Unlimited subscriptions",
-              "Customer management",
-              "Revenue tracking & charts",
-              "Status monitoring (active, paused, cancelled)",
-              "Email notifications",
-              "MercadoPago integration",
-              "14-day free trial",
-              "Priority support",
-            ].map((feature, i) => (
+            {[t('unlimitedSubscriptions'), t('customerManagement'), t('revenueTracking'), t('statusMonitoring'), t('emailNotifications'), t('freeTrial'), t('prioritySupport')].map((feature, i) => (
               <div key={i} className="flex items-center gap-3">
                 <IconCheck className="w-5 h-5 text-success flex-shrink-0" />
                 <span className="text-sm">{feature}</span>
@@ -60,10 +53,10 @@ export default function PricingPage() {
 
           <Link href="/auth/sign-up">
             <Button className="w-full" size="lg">
-              Start Free Trial
+              {t('getStarted')}
             </Button>
           </Link>
-          <p className="text-xs text-center text-muted-foreground mt-4">No credit card required for trial</p>
+          <p className="text-xs text-center text-muted-foreground mt-4">{t('noCard')}</p>
         </Card>
       </div>
     </div>

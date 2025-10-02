@@ -1,23 +1,25 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useLocale } from "next/navigation"
-import { useTranslations } from 'next-intl'
+import { usePathname, useRouter } from "next/navigation"
+import { useLocale, useTranslations } from 'next-intl'
 import { IconLayoutDashboard, IconReceipt, IconUsers, IconSettings, IconLogout } from "@tabler/icons-react"
 import { cn } from "@/lib/utils"
 import { LanguageSwitch } from "./language-switch"
+import { signOut } from "firebase/auth"
+import { auth } from "@/lib/firebase"
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
   const locale = useLocale()
   const t = useTranslations('navigation')
   const tAuth = useTranslations('auth')
 
   const navigation = [
-    { name: t('dashboard'), href: `/${locale}/app`, icon: IconLayoutDashboard },
-    { name: t('subscriptions'), href: `/${locale}/app/subscriptions`, icon: IconReceipt },
-    { name: t('customers'), href: `/${locale}/app/customers`, icon: IconUsers },
-    { name: t('settings'), href: `/${locale}/app/settings`, icon: IconSettings },
+    { name: t('dashboard'), href: `/${locale}`, icon: IconLayoutDashboard },
+    { name: t('customers'), href: `/${locale}/customers`, icon: IconUsers },
+    { name: t('settings'), href: `/${locale}/settings`, icon: IconSettings },
   ]
 
   return (
@@ -33,7 +35,10 @@ export function AppSidebar() {
       {/* Navigation */}
       <nav className="flex-1 space-y-1 p-4">
         {navigation.map((item) => {
-          const isActive = pathname === item.href || pathname?.startsWith(item.href + "/")
+          const isDashboard = item.href === `/${locale}`
+          const isActive = isDashboard
+            ? pathname === item.href
+            : pathname === item.href || pathname?.startsWith(item.href + "/")
           return (
             <Link
               key={item.name}
@@ -61,7 +66,16 @@ export function AppSidebar() {
 
       {/* User Section */}
       <div className="border-t border-sidebar-border p-4">
-        <button className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors">
+        <button
+          onClick={async () => {
+            try {
+              await signOut(auth)
+            } finally {
+              router.push(`/${locale}/auth/sign-in`)
+            }
+          }}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+        >
           <IconLogout className="h-5 w-5" />
           {tAuth('signOut')}
         </button>
