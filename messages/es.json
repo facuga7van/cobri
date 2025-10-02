@@ -1,0 +1,102 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "sort": "Ordenar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "navigation": {
+    "dashboard": "Panel",
+    "subscriptions": "Suscripciones",
+    "customers": "Clientes",
+    "settings": "Configuración",
+    "pricing": "Precios"
+  },
+  "theme": {
+    "darkMode": "Modo oscuro",
+    "lightMode": "Modo claro",
+    "systemMode": "Sistema",
+    "themeDescription": "Cambiar entre tema claro y oscuro"
+  },
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signUp": "Registrarse",
+    "signOut": "Cerrar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "rememberMe": "Recordarme",
+    "createAccount": "Crear cuenta",
+    "alreadyHaveAccount": "¿Ya tienes una cuenta?",
+    "dontHaveAccount": "¿No tienes una cuenta?"
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "welcome": "Bienvenido",
+    "totalRevenue": "Ingresos Totales",
+    "activeSubscriptions": "Suscripciones Activas",
+    "monthlyRecurring": "Recurrente Mensual",
+    "churnRate": "Tasa de Abandono"
+  },
+  "subscriptions": {
+    "title": "Suscripciones",
+    "addSubscription": "Agregar Suscripción",
+    "subscriptionName": "Nombre de la Suscripción",
+    "price": "Precio",
+    "billingCycle": "Ciclo de Facturación",
+    "nextBilling": "Próxima Facturación",
+    "status": "Estado",
+    "active": "Activa",
+    "cancelled": "Cancelada",
+    "paused": "Pausada",
+    "monthly": "Mensual",
+    "yearly": "Anual",
+    "weekly": "Semanal",
+    "daily": "Diario"
+  },
+  "customers": {
+    "title": "Clientes",
+    "addCustomer": "Agregar Cliente",
+    "customerName": "Nombre del Cliente",
+    "email": "Correo Electrónico",
+    "phone": "Teléfono",
+    "joinDate": "Fecha de Registro",
+    "totalSpent": "Total Gastado",
+    "subscriptions": "Suscripciones"
+  },
+  "settings": {
+    "title": "Configuración",
+    "profile": "Perfil",
+    "account": "Cuenta",
+    "notifications": "Notificaciones",
+    "billing": "Facturación",
+    "privacy": "Privacidad",
+    "language": "Idioma",
+    "currency": "Moneda",
+    "timezone": "Zona Horaria"
+  },
+  "pricing": {
+    "title": "Precios",
+    "free": "Gratis",
+    "pro": "Pro",
+    "enterprise": "Empresa",
+    "monthly": "Mensual",
+    "yearly": "Anual",
+    "getStarted": "Comenzar",
+    "contactSales": "Contactar Ventas",
+    "mostPopular": "Más Popular"
+  }
+}

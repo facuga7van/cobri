@@ -1,0 +1,102 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "subscriptions": "Subscriptions",
+    "customers": "Customers",
+    "settings": "Settings",
+    "pricing": "Pricing"
+  },
+  "theme": {
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "systemMode": "System",
+    "themeDescription": "Switch between light and dark theme"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "signOut": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot your password?",
+    "rememberMe": "Remember me",
+    "createAccount": "Create Account",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "totalRevenue": "Total Revenue",
+    "activeSubscriptions": "Active Subscriptions",
+    "monthlyRecurring": "Monthly Recurring",
+    "churnRate": "Churn Rate"
+  },
+  "subscriptions": {
+    "title": "Subscriptions",
+    "addSubscription": "Add Subscription",
+    "subscriptionName": "Subscription Name",
+    "price": "Price",
+    "billingCycle": "Billing Cycle",
+    "nextBilling": "Next Billing",
+    "status": "Status",
+    "active": "Active",
+    "cancelled": "Cancelled",
+    "paused": "Paused",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "weekly": "Weekly",
+    "daily": "Daily"
+  },
+  "customers": {
+    "title": "Customers",
+    "addCustomer": "Add Customer",
+    "customerName": "Customer Name",
+    "email": "Email",
+    "phone": "Phone",
+    "joinDate": "Join Date",
+    "totalSpent": "Total Spent",
+    "subscriptions": "Subscriptions"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "account": "Account",
+    "notifications": "Notifications",
+    "billing": "Billing",
+    "privacy": "Privacy",
+    "language": "Language",
+    "currency": "Currency",
+    "timezone": "Timezone"
+  },
+  "pricing": {
+    "title": "Pricing",
+    "free": "Free",
+    "pro": "Pro",
+    "enterprise": "Enterprise",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "getStarted": "Get Started",
+    "contactSales": "Contact Sales",
+    "mostPopular": "Most Popular"
+  }
+}
