@@ -21,6 +21,7 @@
   "navigation": {
     "dashboard": "Panel",
     "subscriptions": "Suscripciones",
+    "details": "Detalles",
     "customers": "Clientes",
     "settings": "Configuración",
     "pricing": "Precios"
@@ -56,8 +57,12 @@
     "notFound": "Suscripción no encontrada",
     "customerInfo": "Información del cliente",
     "subscriptionDetails": "Detalles de la suscripción",
+    "noSubscriptions": "Aún no hay suscripciones",
     "markPaid": "Pagado",
     "paidSaved": "Pago registrado",
+    "edit": "Editar",
+    "pause": "Pausar",
+    "resume": "Reanudar",
     "title": "Suscripciones",
     "description": "Gestiona todas tus suscripciones recurrentes",
     "addSubscription": "Agregar Suscripción",
@@ -100,9 +105,11 @@
     "joinDate": "Fecha de Registro",
     "totalSpent": "Total Gastado",
     "totalValue": "Valor total",
+    "details": "Detalles",
     "subscriptions": "Suscripciones",
     "searchCustomersPlaceholder": "Buscar clientes...",
-    "customerCreated": "Cliente creado"
+    "customerCreated": "Cliente creado",
+    "notFound": "Cliente no encontrado"
   },
   "settings": {
     "title": "Configuración",

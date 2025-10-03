@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
+import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -15,6 +16,7 @@ import { NewCustomerDialog } from "@/components/new-customer-dialog"
 export default function CustomersPage() {
   const [search, setSearch] = useState("")
   const t = useTranslations('customers')
+  const locale = useLocale()
   const { user } = useAuth()
   const [rows, setRows] = useState<Array<{ id: string; name: string; email: string; subscriptions?: number; totalValue?: number }>>([])
 
@@ -84,6 +86,11 @@ export default function CustomersPage() {
                     <p className="text-xs text-muted-foreground">{t('totalValue')}</p>
                     <p className="text-sm font-medium">${customer.totalValue ?? 0}/mo</p>
                   </div>
+                </div>
+                <div className="mt-4">
+                  <Link href={`/${locale}/customers/${customer.id}`}>
+                    <Button className="pointer" size="sm" variant="outline">{t('details')}</Button>
+                  </Link>
                 </div>
               </div>
             </div>

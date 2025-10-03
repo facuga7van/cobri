@@ -21,6 +21,7 @@
   "navigation": {
     "dashboard": "Dashboard",
     "subscriptions": "Subscriptions",
+    "details": "Details",
     "customers": "Customers",
     "settings": "Settings",
     "pricing": "Pricing"
@@ -95,9 +96,11 @@
     "joinDate": "Join Date",
     "totalSpent": "Total Spent",
     "totalValue": "Total value",
+    "details": "Details",
     "subscriptions": "Subscriptions",
     "searchCustomersPlaceholder": "Search customers...",
-    "customerCreated": "Customer created"
+    "customerCreated": "Customer created",
+    "notFound": "Customer not found"
   },
   "settings": {
     "title": "Settings",

@@ -15,7 +15,8 @@ import { db } from "@/lib/firebase"
 import { collection, getDocs, onSnapshot, orderBy, query } from "firebase/firestore"
 import { useRouter } from "next/navigation"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { doc, updateDoc, addDoc, serverTimestamp } from "firebase/firestore"
+import { doc, updateDoc, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore"
+import { EditSubscriptionDialog, type EditableSubscription } from "@/components/edit-subscription-dialog"
 
 export default function SubscriptionsPage() {
   const locale = useLocale()
@@ -28,6 +29,7 @@ export default function SubscriptionsPage() {
   type RowStatus = "authorized" | "paused" | "cancelled" | "pending"
   const [rows, setRows] = useState<Array<{
     id: string
+    customerId?: string
     customerName: string
     email: string
     plan: string
@@ -37,6 +39,8 @@ export default function SubscriptionsPage() {
     lastPayment?: string | null
     nextPayment?: string | null
   }>>([])
+  const [editOpen, setEditOpen] = useState(false)
+  const [editRow, setEditRow] = useState<EditableSubscription | null>(null)
 
   useEffect(() => {
     if (!user) return
@@ -69,6 +73,7 @@ export default function SubscriptionsPage() {
         const cust = customerMap.get(s.customerId ?? '')
         list.push({
           id: d.id,
+          customerId: s.customerId ?? undefined,
           customerName: cust?.name ?? '—',
           email: cust?.email ?? '—',
           plan: s.plan ?? '',
@@ -117,6 +122,19 @@ export default function SubscriptionsPage() {
     })
     // Optimistic UI update
     setRows((prev) => prev.map((r) => r.id === row.id ? { ...r, lastPayment: new Date().toLocaleDateString(), nextPayment: next.toLocaleDateString() } : r))
+  }
+
+  async function handlePauseResume(row: typeof rows[number]) {
+    if (!user) return
+    const subRef = doc(db, 'users', user.uid, 'subscriptions', row.id)
+    const newStatus = row.status === 'paused' ? 'authorized' : 'paused'
+    await updateDoc(subRef, { status: newStatus })
+    setRows((prev)=>prev.map((r)=>r.id===row.id?{...r, status: newStatus as any}:r))
+  }
+
+  async function handleDelete(row: typeof rows[number]) {
+    if (!user) return
+    await deleteDoc(doc(db, 'users', user.uid, 'subscriptions', row.id))
   }
 
   return (
@@ -215,6 +233,9 @@ export default function SubscriptionsPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => router.push(`/${locale}/subscriptions/${sub.id}`)}>{tCommon('details') ?? 'Details'}</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleMarkPaid(sub)}>{t('markPaid')}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setEditRow({ id: sub.id, customerId: sub.customerId || '', plan: sub.plan, price: sub.price, billingCycle: sub.billingCycle as any, status: sub.status as any, nextPayment: sub.nextPayment || null }); setEditOpen(true) }}>{t('edit', { default: 'Edit' })}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handlePauseResume(sub)}>{sub.status==='paused' ? (t('resume',{default:'Resume'})) : (t('pause',{default:'Pause'}))}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDelete(sub)}>{tCommon('delete')}</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
@@ -224,6 +245,21 @@ export default function SubscriptionsPage() {
           </table>
         </div>
       </Card>
+
+      <EditSubscriptionDialog
+        row={editRow}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        onSaved={(u)=>{
+          setRows((prev)=>prev.map((r)=> r.id===editRow?.id? {
+            ...r,
+            plan: u.plan ?? r.plan,
+            price: typeof u.price === 'number' ? u.price : r.price,
+            billingCycle: (u.billingCycle as any) ?? r.billingCycle,
+            nextPayment: u.nextPayment ? new Date(u.nextPayment).toLocaleDateString() : r.nextPayment,
+          }: r))
+        }}
+      />
     </div>
   )
 }
