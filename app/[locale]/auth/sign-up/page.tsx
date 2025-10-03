@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -13,10 +11,12 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
+import { useTranslations } from "next-intl"
 
 export default function SignUpPage() {
   const router = useRouter()
   const { toast } = useToast()
+  const tAuth = useTranslations('auth')
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
@@ -37,10 +37,10 @@ export default function SignUpPage() {
         lastLoginAt: serverTimestamp(),
         theme: null,
       }, { merge: true })
-      toast({ title: "Account created", description: "Welcome to Cobri! Starting your free trial..." })
+      toast({ title: tAuth('accountCreated', { default: 'Account created' }), description: tAuth('welcomeTrial', { default: 'Welcome! Starting your free trial...' }) })
       router.push("../")
     } catch (err: any) {
-      toast({ title: "Error", description: err?.message ?? "Sign up failed" })
+      toast({ title: "Error", description: err?.message ?? tAuth('signUpFailed', { default: 'Sign up failed' }) })
     } finally {
       setLoading(false)
     }
@@ -56,13 +56,13 @@ export default function SignUpPage() {
             </div>
             <span className="text-2xl font-bold">Cobri</span>
           </Link>
-          <h1 className="text-2xl font-bold mb-2">Start your free trial</h1>
-          <p className="text-muted-foreground">No credit card required</p>
+          <h1 className="text-2xl font-bold mb-2">{tAuth('startTrial', { default: 'Start your free trial' })}</h1>
+          <p className="text-muted-foreground">{tAuth('noCard', { default: 'No credit card required' })}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name">{tAuth('fullName', { default: 'Full Name' })}</Label>
             <Input
               id="name"
               type="text"
@@ -73,7 +73,7 @@ export default function SignUpPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{tAuth('email')}</Label>
             <Input
               id="email"
               type="email"
@@ -84,7 +84,7 @@ export default function SignUpPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{tAuth('password')}</Label>
             <Input
               id="password"
               type="password"
@@ -95,14 +95,14 @@ export default function SignUpPage() {
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Creating account..." : "Start Free Trial"}
+            {loading ? tAuth('creatingAccount', { default: 'Creating account...' }) : tAuth('startTrialCta', { default: 'Start Free Trial' })}
           </Button>
         </form>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Already have an account?{" "}
-          <Link href="../sign-in" className="text-primary hover:underline">
-            Sign in
+          {tAuth('alreadyHaveAccount')} {" "}
+          <Link href="/auth/sign-in" className="text-primary hover:underline">
+            {tAuth('signIn')}
           </Link>
         </p>
       </Card>

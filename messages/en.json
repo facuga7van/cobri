@@ -16,7 +16,8 @@
     "confirm": "Confirm",
     "yes": "Yes",
     "no": "No",
-    "details": "Details"
+    "details": "Details",
+    "or": "or"
   },
   "navigation": {
     "dashboard": "Dashboard",
@@ -44,6 +45,18 @@
     "createAccount": "Create Account",
     "alreadyHaveAccount": "Already have an account?",
     "dontHaveAccount": "Don't have an account?"
+    ,"welcomeBack": "Welcome back"
+    ,"signInToYourAccount": "Sign in to your account"
+    ,"signingIn": "Signing in..."
+    ,"startTrial": "Start your free trial"
+    ,"noCard": "No credit card required"
+    ,"creatingAccount": "Creating account..."
+    ,"startTrialCta": "Start Free Trial"
+    ,"fullName": "Full Name"
+    ,"accountCreated": "Account created"
+    ,"welcomeTrial": "Welcome! Starting your free trial..."
+    ,"signUpFailed": "Sign up failed"
+    ,"continueWithGoogle": "Continue with Google"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -111,7 +124,10 @@
     "privacy": "Privacy",
     "language": "Language",
     "currency": "Currency",
-    "timezone": "Timezone"
+    "timezone": "Timezone",
+    "overview": "View your account information",
+    "joined": "Joined",
+    "currentTheme": "Current theme"
   },
   "pricing": {
     "title": "Simple, Transparent Pricing",

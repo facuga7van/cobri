@@ -4,8 +4,9 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { auth, db } from "@/lib/firebase"
-import { GoogleAuthProvider, signInWithCredential, signInWithPopup } from "firebase/auth"
+import { GoogleAuthProvider, signInWithCredential, signInWithPopup, signInWithRedirect } from "firebase/auth"
 import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore"
+import { useTranslations } from "next-intl"
 
 declare global {
   interface Window {
@@ -18,6 +19,12 @@ export function GoogleLoginButton() {
   const router = useRouter()
   const buttonRef = React.useRef<HTMLDivElement>(null)
   const [fallback, setFallback] = React.useState(false)
+  const tAuth = useTranslations('auth')
+
+  const isMobile = React.useMemo(() => {
+    if (typeof navigator === 'undefined') return false
+    return /Mobi|Android/i.test(navigator.userAgent) || (typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(pointer:coarse)').matches)
+  }, [])
 
   const handleFirebaseUser = React.useCallback(async (user: any) => {
     const userRef = doc(db, 'users', user.uid)
@@ -39,7 +46,7 @@ export function GoogleLoginButton() {
 
   React.useEffect(() => {
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
-    if (!clientId) {
+    if (!clientId || isMobile) {
       setFallback(true)
       return
     }
@@ -64,6 +71,7 @@ export function GoogleLoginButton() {
       callback: handleCredentialResponse,
       auto_select: false,
       cancel_on_tap_outside: true,
+      itp_support: true,
     })
 
     if (buttonRef.current) {
@@ -78,7 +86,7 @@ export function GoogleLoginButton() {
     }
 
     google.accounts.id.prompt()
-  }, [router, toast])
+  }, [router, toast, isMobile, handleFirebaseUser])
 
   if (fallback) {
     return (
@@ -87,8 +95,12 @@ export function GoogleLoginButton() {
           try {
             const provider = new GoogleAuthProvider()
             provider.setCustomParameters({ prompt: 'select_account' })
-            const cred = await signInWithPopup(auth, provider)
-            await handleFirebaseUser(cred.user)
+            if (isMobile) {
+              await signInWithRedirect(auth, provider)
+            } else {
+              const cred = await signInWithPopup(auth, provider)
+              await handleFirebaseUser(cred.user)
+            }
           } catch (err: any) {
             toast({ title: 'Error', description: err?.message ?? 'Google sign in failed' })
           }
@@ -111,7 +123,7 @@ export function GoogleLoginButton() {
               </defs>
             </svg>
           </span>
-          <span className="Button-label">Continue with Google</span>
+          <span className="Button-label">{tAuth('continueWithGoogle')}</span>
         </span>
       </button>
     )

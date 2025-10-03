@@ -14,10 +14,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { GoogleLoginButton } from "@/components/google-login-button"
+import { useTranslations } from "next-intl"
 
 export default function SignInPage() {
   const router = useRouter()
   const { toast } = useToast()
+  const tAuth = useTranslations('auth')
+  const tCommon = useTranslations('common')
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -43,10 +46,10 @@ export default function SignInPage() {
       }
       const payload = snap.exists() ? base : { ...base, createdAt: serverTimestamp() }
       await setDoc(userRef, payload, { merge: true })
-      toast({ title: "Sign in successful", description: "Redirecting to dashboard..." })
+      toast({ title: tAuth('signIn'), description: tAuth('welcomeBack') })
       router.push("../")
     } catch (err: any) {
-      toast({ title: "Error", description: err?.message ?? "Sign in failed" })
+      toast({ title: "Error", description: err?.message ?? tAuth('signUpFailed') })
     } finally {
       setLoading(false)
     }
@@ -72,10 +75,10 @@ export default function SignInPage() {
       }
       const payload = snap.exists() ? base : { ...base, createdAt: serverTimestamp() }
       await setDoc(userRef, payload, { merge: true })
-      toast({ title: "Sign in successful", description: "Redirecting to dashboard..." })
+      toast({ title: tAuth('signIn'), description: tAuth('welcomeBack') })
       router.push("../")
     } catch (err: any) {
-      toast({ title: "Error", description: err?.message ?? "Google sign in failed" })
+      toast({ title: "Error", description: err?.message ?? tAuth('signUpFailed') })
     } finally {
       setOauthLoading(false)
     }
@@ -91,13 +94,13 @@ export default function SignInPage() {
             </div>
             <span className="text-2xl font-bold">Cobri</span>
           </Link>
-          <h1 className="text-2xl font-bold mb-2">Welcome back</h1>
-          <p className="text-muted-foreground">Sign in to your account</p>
+          <h1 className="text-2xl font-bold mb-2">{tAuth('welcomeBack')}</h1>
+          <p className="text-muted-foreground">{tAuth('signInToYourAccount')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{tAuth('email')}</Label>
             <Input
               id="email"
               type="email"
@@ -108,7 +111,7 @@ export default function SignInPage() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{tAuth('password')}</Label>
             <Input
               id="password"
               type="password"
@@ -119,13 +122,13 @@ export default function SignInPage() {
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? tAuth('signingIn') : tAuth('signIn')}
           </Button>
         </form>
 
         <div className="my-4 grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-sm text-muted-foreground">
           <span className="h-px bg-border" />
-          <span>or</span>
+          <span>{tCommon('or')}</span>
           <span className="h-px bg-border" />
         </div>
 
@@ -134,9 +137,9 @@ export default function SignInPage() {
         </div>
 
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Don't have an account?{" "}
+          {tAuth('dontHaveAccount')} {" "}
           <Link href="/auth/sign-up" className="text-primary hover:underline">
-            Sign up
+            {tAuth('signUp')}
           </Link>
         </p>
       </Card>

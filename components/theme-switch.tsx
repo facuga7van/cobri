@@ -24,18 +24,16 @@ export function ThemeSwitch() {
   return (
     <div className="flex items-center justify-between">
       <div>
-        <Label htmlFor="theme-switch" className="font-medium">
+        <Label htmlFor="theme-switch" className="font-medium pb-2">
           {t('darkMode')}
         </Label>
-        <p className="text-sm text-muted-foreground">
-          {t('themeDescription')}
-        </p>
-      </div>
-      <Switch
+        <Switch
         id="theme-switch"
+        
         checked={isDark}
         onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
       />
+      </div>
     </div>
   )
 }

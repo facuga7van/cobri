@@ -16,7 +16,8 @@
     "confirm": "Confirmar",
     "yes": "Sí",
     "no": "No",
-    "details": "Detalles"
+    "details": "Detalles",
+    "or": "o"
   },
   "navigation": {
     "dashboard": "Panel",
@@ -43,7 +44,19 @@
     "rememberMe": "Recordarme",
     "createAccount": "Crear cuenta",
     "alreadyHaveAccount": "¿Ya tienes una cuenta?",
-    "dontHaveAccount": "¿No tienes una cuenta?"
+    "dontHaveAccount": "¿No tienes una cuenta?",
+    "welcomeBack": "Bienvenido de nuevo",
+    "signInToYourAccount": "Inicia sesión en tu cuenta",
+    "signingIn": "Iniciando sesión...",
+    "startTrial": "Comienza tu prueba gratuita",
+    "noCard": "No se requiere tarjeta de crédito",
+    "creatingAccount": "Creando cuenta...",
+    "startTrialCta": "Comenzar prueba gratuita",
+    "fullName": "Nombre completo",
+    "accountCreated": "Cuenta creada",
+    "welcomeTrial": "¡Bienvenido! Iniciando tu prueba gratuita...",
+    "signUpFailed": "Error al registrarse",
+    "continueWithGoogle": "Continuar con Google"
   },
   "dashboard": {
     "title": "Panel de Control",
@@ -120,7 +133,10 @@
     "privacy": "Privacidad",
     "language": "Idioma",
     "currency": "Moneda",
-    "timezone": "Zona Horaria"
+    "timezone": "Zona Horaria",
+    "overview": "Consulta la información de tu cuenta",
+    "joined": "Alta",
+    "currentTheme": "Tema actual"
   },
   "pricing": {
     "title": "Precios simples y transparentes",
