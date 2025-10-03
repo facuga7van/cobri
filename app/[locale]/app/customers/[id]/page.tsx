@@ -86,7 +86,7 @@ export default function CustomerDetailPage({ params }: { params: { id: string, l
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-col sm:flex-row">
         <Link href={`/${locale}/customers`}>
           <Button variant="ghost" size="sm">
             <IconArrowLeft className="h-4 w-4 mr-2" />
@@ -94,8 +94,8 @@ export default function CustomerDetailPage({ params }: { params: { id: string, l
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">{customer.name}</h1>
-          <p className="text-muted-foreground">{customer.email}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">{customer.name}</h1>
+          <p className="text-muted-foreground break-all">{customer.email}</p>
         </div>
       </div>
 
@@ -108,24 +108,24 @@ export default function CustomerDetailPage({ params }: { params: { id: string, l
             <table className="w-full">
               <thead className="border-b border-border">
                 <tr>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">{tSubs('tablePlan')}</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">{tSubs('status')}</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">{tSubs('lastPayment')}</th>
-                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">{tSubs('nextPayment')}</th>
+                  <th className="text-left p-3 md:p-4 text-xs md:text-sm font-medium text-muted-foreground">{tSubs('tablePlan')}</th>
+                  <th className="text-left p-3 md:p-4 text-xs md:text-sm font-medium text-muted-foreground">{tSubs('status')}</th>
+                  <th className="text-left p-3 md:p-4 text-xs md:text-sm font-medium text-muted-foreground hidden sm:table-cell">{tSubs('lastPayment')}</th>
+                  <th className="text-left p-3 md:p-4 text-xs md:text-sm font-medium text-muted-foreground hidden sm:table-cell">{tSubs('nextPayment')}</th>
                 </tr>
               </thead>
               <tbody>
                 {subs.map((s) => (
                   <tr key={s.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
-                    <td className="p-4">
+                    <td className="p-3 md:p-4">
                       <div>
                         <p className="font-medium">{s.plan}</p>
                         <p className="text-sm text-muted-foreground">${s.price}/{s.billingCycle === 'yearly' ? 'yr' : 'mo'}</p>
                       </div>
                     </td>
-                    <td className="p-4"><StatusBadge status={s.status} /></td>
-                    <td className="p-4 text-sm">{s.lastPayment ?? '—'}</td>
-                    <td className="p-4 text-sm">{s.nextPayment ?? '—'}</td>
+                    <td className="p-3 md:p-4"><StatusBadge status={s.status} /></td>
+                    <td className="p-3 md:p-4 text-sm hidden sm:table-cell">{s.lastPayment ?? '—'}</td>
+                    <td className="p-3 md:p-4 text-sm hidden sm:table-cell">{s.nextPayment ?? '—'}</td>
                   </tr>
                 ))}
               </tbody>

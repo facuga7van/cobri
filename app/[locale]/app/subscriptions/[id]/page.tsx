@@ -118,7 +118,7 @@ export default function SubscriptionDetailPage({ params }: { params: { id: strin
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
+      <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-col sm:flex-row">
         <Link href={`/${params.locale}/subscriptions`}>
           <Button variant="ghost" size="sm">
             <IconArrowLeft className="h-4 w-4 mr-2" />
@@ -126,8 +126,8 @@ export default function SubscriptionDetailPage({ params }: { params: { id: strin
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">{sub.customerName}</h1>
-          <p className="text-muted-foreground">{sub.email}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">{sub.customerName}</h1>
+          <p className="text-muted-foreground break-all">{sub.email}</p>
         </div>
       </div>
 

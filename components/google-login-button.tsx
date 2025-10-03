@@ -59,7 +59,38 @@ export function GoogleLoginButton() {
       emailVerified: user.emailVerified ?? false,
       lastLoginAt: serverTimestamp(),
     }
-    const payload = snap.exists() ? base : { ...base, createdAt: serverTimestamp() }
+    let payload: any
+    if (snap.exists()) {
+      const data = snap.data() as any
+      const hasStatus = typeof data?.subscriptionStatus === 'string'
+      const hasTrialEnds = !!data?.trialEndsAt
+      if (!hasStatus || !hasTrialEnds) {
+        let trialEndsAt: Date
+        const created = data?.createdAt
+        if (created?.toDate) {
+          trialEndsAt = created.toDate()
+        } else if (typeof created?.seconds === 'number') {
+          trialEndsAt = new Date(created.seconds * 1000)
+        } else if (created) {
+          trialEndsAt = new Date(created)
+        } else {
+          trialEndsAt = new Date()
+        }
+        trialEndsAt.setDate(trialEndsAt.getDate() + 15)
+
+        payload = {
+          ...base,
+          ...(hasStatus ? {} : { subscriptionStatus: 'trial' }),
+          ...(hasTrialEnds ? {} : { trialEndsAt }),
+        }
+      } else {
+        payload = base
+      }
+    } else {
+      const trialEndsAt = new Date()
+      trialEndsAt.setDate(trialEndsAt.getDate() + 15)
+      payload = { ...base, createdAt: serverTimestamp(), subscriptionStatus: 'trial', trialEndsAt }
+    }
     await setDoc(userRef, payload, { merge: true })
     toast({ title: 'Sign in successful', description: 'Redirecting to dashboard...' })
     router.replace(`/${locale}`)

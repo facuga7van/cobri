@@ -139,7 +139,7 @@ export default function SubscriptionsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-0 flex-col sm:flex-row">
         <div>
           <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
           <p className="text-muted-foreground">{t('description')}</p>
@@ -149,7 +149,7 @@ export default function SubscriptionsPage() {
 
       {/* Filters */}
       <Card className="p-4">
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="flex-1 relative">
             <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -160,7 +160,7 @@ export default function SubscriptionsPage() {
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder={t('filterByStatus')} />
             </SelectTrigger>
             <SelectContent>
@@ -180,12 +180,12 @@ export default function SubscriptionsPage() {
           <table className="w-full">
             <thead className="border-b border-border">
               <tr>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('tableCustomer')}</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('tablePlan')}</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('status')}</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('lastPayment')}</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">{t('nextPayment')}</th>
-                <th className="text-right p-4 text-sm font-medium text-muted-foreground">{t('actions')}</th>
+                <th className="text-left p-3 md:p-4 text-xs md:text-sm font-medium text-muted-foreground">{t('tableCustomer')}</th>
+                <th className="text-left p-3 md:p-4 text-xs md:text-sm font-medium text-muted-foreground">{t('tablePlan')}</th>
+                <th className="text-left p-3 md:p-4 text-xs md:text-sm font-medium text-muted-foreground">{t('status')}</th>
+                <th className="text-left p-3 md:p-4 text-xs md:text-sm font-medium text-muted-foreground hidden sm:table-cell">{t('lastPayment')}</th>
+                <th className="text-left p-3 md:p-4 text-xs md:text-sm font-medium text-muted-foreground hidden sm:table-cell">{t('nextPayment')}</th>
+                <th className="text-right p-3 md:p-4 text-xs md:text-sm font-medium text-muted-foreground">{t('actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -194,25 +194,25 @@ export default function SubscriptionsPage() {
                   key={sub.id}
                   className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer"
                 >
-                  <td className="p-4">
+                  <td className="p-3 md:p-4">
                     <div>
                       <p className="font-medium">{sub.customerName}</p>
                       <p className="text-sm text-muted-foreground">{sub.email}</p>
                     </div>
                   </td>
-                  <td className="p-4">
+                  <td className="p-3 md:p-4">
                     <div>
                       <p className="font-medium">{sub.plan}</p>
                       <p className="text-sm text-muted-foreground">${sub.price}/{sub.billingCycle === 'yearly' ? 'yr' : 'mo'}</p>
                     </div>
                   </td>
-                  <td className="p-4">
+                  <td className="p-3 md:p-4">
                     <StatusBadge status={sub.status} />
                   </td>
-                  <td className="p-4 text-sm">{sub.lastPayment}</td>
-                  <td className="p-4 text-sm">{sub.nextPayment}</td>
+                  <td className="p-3 md:p-4 text-sm hidden sm:table-cell">{sub.lastPayment}</td>
+                  <td className="p-3 md:p-4 text-sm hidden sm:table-cell">{sub.nextPayment}</td>
                   <td
-                    className="p-4 text-right"
+                    className="p-3 md:p-4 text-right"
                     onClick={(e) => e.stopPropagation()}
                     onMouseDown={(e) => e.stopPropagation()}
                     onPointerDown={(e) => e.stopPropagation()}

@@ -31,12 +31,16 @@ export default function SignUpPage() {
       if (name) {
         await updateProfile(cred.user, { displayName: name })
       }
+      const trialEndsAt = new Date()
+      trialEndsAt.setDate(trialEndsAt.getDate() + 15)
       await setDoc(doc(db, 'users', cred.user.uid), {
         email,
         displayName: name,
         createdAt: serverTimestamp(),
         lastLoginAt: serverTimestamp(),
         theme: null,
+        subscriptionStatus: 'trial',
+        trialEndsAt,
       }, { merge: true })
       toast({ title: tAuth('accountCreated', { default: 'Account created' }), description: tAuth('welcomeTrial', { default: 'Welcome! Starting your free trial...' }) })
       router.replace(`/${locale}`)

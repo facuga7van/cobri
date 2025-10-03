@@ -40,7 +40,7 @@ export default function CustomersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-0 flex-col sm:flex-row">
         <div>
           <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
           <p className="text-muted-foreground">{t('manageDescription')}</p>
@@ -62,7 +62,7 @@ export default function CustomersPage() {
       </Card>
 
       {/* Customer Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {filteredCustomers.map((customer) => (
           <Card key={customer.id} className="p-6">
             <div className="flex items-start gap-4">
@@ -89,7 +89,7 @@ export default function CustomersPage() {
                 </div>
                 <div className="mt-4">
                   <Link href={`/${locale}/customers/${customer.id}`}>
-                    <Button className="pointer" size="sm" variant="outline">{t('details')}</Button>
+                    <Button className="pointer w-full sm:w-auto" size="sm" variant="outline">{t('details')}</Button>
                   </Link>
                 </div>
               </div>

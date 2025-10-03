@@ -39,13 +39,13 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">{t('title')}</h1>
         <p className="text-muted-foreground">{t('overview', { default: 'View your account information' })}</p>
       </div>
 
       <Card className="p-6">
         <h2 className="text-lg font-semibold mb-4">{t('profile')}</h2>
-        <div className="grid md:grid-cols-2 gap-4 text-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">{tAuth('email')}</p>
             <p className="font-medium break-all">{email || '—'}</p>
