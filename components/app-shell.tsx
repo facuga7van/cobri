@@ -25,8 +25,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (loading) return null
 
   if (!user) {
-    // No shell for unauthenticated routes (pricing/auth)
-    return <>{children}</>
+    // No mostrar contenido de rutas protegidas antes del redirect
+    if (isPricing || isAuthRoute) return <>{children}</>
+    return null
   }
 
   return (

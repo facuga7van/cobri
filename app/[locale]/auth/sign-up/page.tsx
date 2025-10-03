@@ -11,12 +11,13 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 
 export default function SignUpPage() {
   const router = useRouter()
   const { toast } = useToast()
   const tAuth = useTranslations('auth')
+  const locale = useLocale()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [name, setName] = useState("")
@@ -38,7 +39,7 @@ export default function SignUpPage() {
         theme: null,
       }, { merge: true })
       toast({ title: tAuth('accountCreated', { default: 'Account created' }), description: tAuth('welcomeTrial', { default: 'Welcome! Starting your free trial...' }) })
-      router.push("../")
+      router.replace(`/${locale}`)
     } catch (err: any) {
       toast({ title: "Error", description: err?.message ?? tAuth('signUpFailed', { default: 'Sign up failed' }) })
     } finally {

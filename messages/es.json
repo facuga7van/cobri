@@ -57,6 +57,8 @@
     "welcomeTrial": "¡Bienvenido! Iniciando tu prueba gratuita...",
     "signUpFailed": "Error al registrarse",
     "continueWithGoogle": "Continuar con Google"
+    ,"openInBrowser": "Abrir en el navegador"
+    ,"inAppBrowserWarning": "Estás usando un navegador dentro de una app. Para un acceso con Google más fluido, abrí esta página en tu navegador predeterminado."
   },
   "dashboard": {
     "title": "Panel de Control",

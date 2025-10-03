@@ -57,6 +57,8 @@
     ,"welcomeTrial": "Welcome! Starting your free trial..."
     ,"signUpFailed": "Sign up failed"
     ,"continueWithGoogle": "Continue with Google"
+    ,"openInBrowser": "Open in browser"
+    ,"inAppBrowserWarning": "You're using an in-app browser. For a smoother Google login, open this page in your default browser."
   },
   "dashboard": {
     "title": "Dashboard",

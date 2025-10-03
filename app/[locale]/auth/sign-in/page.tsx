@@ -14,13 +14,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { GoogleLoginButton } from "@/components/google-login-button"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 
 export default function SignInPage() {
   const router = useRouter()
   const { toast } = useToast()
   const tAuth = useTranslations('auth')
   const tCommon = useTranslations('common')
+  const locale = useLocale()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -47,7 +48,7 @@ export default function SignInPage() {
       const payload = snap.exists() ? base : { ...base, createdAt: serverTimestamp() }
       await setDoc(userRef, payload, { merge: true })
       toast({ title: tAuth('signIn'), description: tAuth('welcomeBack') })
-      router.push("../")
+      router.replace(`/${locale}`)
     } catch (err: any) {
       toast({ title: "Error", description: err?.message ?? tAuth('signUpFailed') })
     } finally {
@@ -76,7 +77,7 @@ export default function SignInPage() {
       const payload = snap.exists() ? base : { ...base, createdAt: serverTimestamp() }
       await setDoc(userRef, payload, { merge: true })
       toast({ title: tAuth('signIn'), description: tAuth('welcomeBack') })
-      router.push("../")
+      router.replace(`/${locale}`)
     } catch (err: any) {
       toast({ title: "Error", description: err?.message ?? tAuth('signUpFailed') })
     } finally {
