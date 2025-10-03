@@ -22,7 +22,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     }
   }, [loading, user, isPricing, isAuthRoute, router, locale])
 
-  // Si ya estás autenticado y estás en rutas de auth, redirigí al home
   React.useEffect(() => {
     if (!loading && user && isAuthRoute) {
       router.replace(`/${locale}`)
@@ -32,12 +31,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (loading) return null
 
   if (!user) {
-    // No mostrar contenido de rutas protegidas antes del redirect
     if (isPricing || isAuthRoute) return <>{children}</>
     return null
   }
 
-  // Evitar renderizar auth pages cuando ya hay usuario (hasta que redirija)
   if (user && isAuthRoute) return null
 
   return (

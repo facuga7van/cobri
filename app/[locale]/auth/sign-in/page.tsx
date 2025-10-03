@@ -5,7 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth, db } from "@/lib/firebase"
 import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore"
 import { Button } from "@/components/ui/button"
@@ -56,34 +56,7 @@ export default function SignInPage() {
     }
   }
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setOauthLoading(true)
-      const provider = new GoogleAuthProvider()
-      provider.setCustomParameters({ prompt: 'select_account' })
-      const cred = await signInWithPopup(auth, provider)
-      const user = cred.user
-      const userRef = doc(db, 'users', user.uid)
-      const snap = await getDoc(userRef)
-      const base = {
-        uid: user.uid,
-        email: user.email ?? '',
-        displayName: user.displayName ?? '',
-        photoURL: user.photoURL ?? '',
-        providerId: user.providerData?.[0]?.providerId ?? 'google',
-        emailVerified: user.emailVerified ?? false,
-        lastLoginAt: serverTimestamp(),
-      }
-      const payload = snap.exists() ? base : { ...base, createdAt: serverTimestamp() }
-      await setDoc(userRef, payload, { merge: true })
-      toast({ title: tAuth('signIn'), description: tAuth('welcomeBack') })
-      router.replace(`/${locale}`)
-    } catch (err: any) {
-      toast({ title: "Error", description: err?.message ?? tAuth('signUpFailed') })
-    } finally {
-      setOauthLoading(false)
-    }
-  }
+  // Google login se maneja con <GoogleLoginButton />
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -109,6 +82,7 @@ export default function SignInPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="email"
             />
           </div>
           <div className="space-y-2">
@@ -120,6 +94,7 @@ export default function SignInPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>

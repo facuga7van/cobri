@@ -4,7 +4,7 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { auth, db } from "@/lib/firebase"
-import { GoogleAuthProvider, signInWithCredential, signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth"
+import { GoogleAuthProvider, signInWithCredential, signInWithPopup, signInWithRedirect, getRedirectResult, setPersistence, browserLocalPersistence, browserSessionPersistence, inMemoryPersistence } from "firebase/auth"
 import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore"
 import { useTranslations, useLocale } from "next-intl"
 
@@ -18,6 +18,7 @@ export function GoogleLoginButton() {
   const { toast } = useToast()
   const router = useRouter()
   const buttonRef = React.useRef<HTMLDivElement>(null)
+  const gisInitRef = React.useRef(false)
   const [fallback, setFallback] = React.useState(false)
   const tAuth = useTranslations('auth')
   const locale = useLocale()
@@ -32,6 +33,18 @@ export function GoogleLoginButton() {
     const ua = navigator.userAgent || navigator.vendor || ""
     const inAppIndicators = ["FBAN", "FBAV", "FB_IAB", "Instagram", "Line/", "Twitter", "TikTok", "wv"]
     return inAppIndicators.some((s) => ua.includes(s))
+  }, [])
+
+  const ensurePersistence = React.useCallback(async () => {
+    try {
+      await setPersistence(auth, browserLocalPersistence)
+    } catch {
+      try {
+        await setPersistence(auth, browserSessionPersistence)
+      } catch {
+        await setPersistence(auth, inMemoryPersistence)
+      }
+    }
   }, [])
 
   const handleFirebaseUser = React.useCallback(async (user: any) => {
@@ -56,6 +69,7 @@ export function GoogleLoginButton() {
   React.useEffect(() => {
     (async () => {
       try {
+        await ensurePersistence()
         const res = await getRedirectResult(auth)
         if (res?.user) {
           await handleFirebaseUser(res.user)
@@ -64,11 +78,12 @@ export function GoogleLoginButton() {
         if (err?.message) toast({ title: 'Error', description: err.message })
       }
     })()
-  }, [handleFirebaseUser, toast])
+  }, [handleFirebaseUser, toast, ensurePersistence])
 
   React.useEffect(() => {
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
-    if (!clientId || isMobile || isInApp) {
+    // Permitimos GIS también en mobile cuando NO es un webview embebido
+    if (!clientId || isInApp) {
       setFallback(true)
       return
     }
@@ -88,6 +103,7 @@ export function GoogleLoginButton() {
       return
     }
 
+    if (gisInitRef.current) return
     google.accounts.id.initialize({
       client_id: clientId,
       callback: handleCredentialResponse,
@@ -106,9 +122,8 @@ export function GoogleLoginButton() {
         logo_alignment: 'left',
       })
     }
-
-    google.accounts.id.prompt()
-  }, [router, toast, isMobile, isInApp, handleFirebaseUser])
+    gisInitRef.current = true
+  }, [router, toast, isInApp, handleFirebaseUser])
 
   const openInBrowser = () => {
     try {
@@ -133,9 +148,11 @@ export function GoogleLoginButton() {
         <button
           onClick={async () => {
             try {
+              await ensurePersistence()
               const provider = new GoogleAuthProvider()
               provider.setCustomParameters({ prompt: 'select_account' })
               if (isMobile || isInApp) {
+                toast({ title: 'Redirigiendo…', description: 'Google' })
                 await signInWithRedirect(auth, provider)
               } else {
                 const cred = await signInWithPopup(auth, provider)

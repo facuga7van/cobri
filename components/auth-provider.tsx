@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { onAuthStateChanged, User } from "firebase/auth"
+import { onAuthStateChanged, User, setPersistence, browserLocalPersistence, browserSessionPersistence, inMemoryPersistence } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 
 type AuthContextValue = {
@@ -16,11 +16,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u)
-      setLoading(false)
-    })
-    return () => unsub()
+    let unsub: (() => void) | null = null
+
+    async function init() {
+      try {
+        await setPersistence(auth, browserLocalPersistence)
+      } catch {
+        try {
+          await setPersistence(auth, browserSessionPersistence)
+        } catch {
+          await setPersistence(auth, inMemoryPersistence)
+        }
+      }
+
+      unsub = onAuthStateChanged(auth, (u) => {
+        setUser(u)
+        setLoading(false)
+      })
+    }
+
+    init()
+
+    return () => {
+      if (unsub) unsub()
+    }
   }, [])
 
   return (
