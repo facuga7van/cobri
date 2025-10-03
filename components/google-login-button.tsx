@@ -4,7 +4,7 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { auth, db } from "@/lib/firebase"
-import { GoogleAuthProvider, signInWithCredential, signInWithPopup, signInWithRedirect } from "firebase/auth"
+import { GoogleAuthProvider, signInWithCredential, signInWithPopup, signInWithRedirect, getRedirectResult } from "firebase/auth"
 import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore"
 import { useTranslations } from "next-intl"
 
@@ -43,6 +43,20 @@ export function GoogleLoginButton() {
     toast({ title: 'Sign in successful', description: 'Redirecting to dashboard...' })
     router.push('../')
   }, [router, toast])
+
+  // Handle redirect result (mobile flow)
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const res = await getRedirectResult(auth)
+        if (res?.user) {
+          await handleFirebaseUser(res.user)
+        }
+      } catch (err: any) {
+        if (err?.message) toast({ title: 'Error', description: err.message })
+      }
+    })()
+  }, [handleFirebaseUser, toast])
 
   React.useEffect(() => {
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
