@@ -63,6 +63,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </div>
             </div>
           </header>
+          <div className="md:hidden px-4 pt-3">
+            <TrialBanner />
+          </div>
           <main className="flex-1 overflow-y-auto p-6">{children}</main>
         </SidebarInset>
       </div>

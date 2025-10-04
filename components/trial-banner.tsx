@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { IconInfoCircle } from "@tabler/icons-react"
+import { IconInfoCircle, IconX } from "@tabler/icons-react"
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
 import { doc, getDoc, getDocFromServer } from "firebase/firestore"
@@ -24,10 +24,22 @@ export function TrialBanner() {
   const { user } = useAuth()
   const [daysLeft, setDaysLeft] = React.useState<number | null>(null)
   const [status, setStatus] = React.useState<string | null>(null)
+  const [dismissed, setDismissed] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     if (!user) return
     let cancelled = false
+    // Inicializa dismiss desde localStorage por usuario
+    try {
+      const key = `trialBannerDismissed_${user.uid}`
+      const val = typeof window !== 'undefined' ? window.localStorage.getItem(key) : null
+      setDismissed(val === '1')
+    } catch {}
+    // Listener para sincronizar entre instancias del componente
+    const onDismissSync = () => setDismissed(true)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('trialBanner:dismiss', onDismissSync as EventListener)
+    }
     ;(async () => {
       try {
         const ref = doc(db, "users", user.uid)
@@ -66,18 +78,38 @@ export function TrialBanner() {
     })()
     return () => {
       cancelled = true
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('trialBanner:dismiss', onDismissSync as EventListener)
+      }
     }
   }, [user])
 
   if (!user) return null
+  if (dismissed) return null
   if (status !== 'trial' || daysLeft === null) return null
 
   return (
     <div className="bg-info/10 border border-info/20 rounded-lg p-4 flex items-center gap-3">
       <IconInfoCircle className="h-5 w-5 text-info flex-shrink-0" />
-      <p className="text-sm">
+      <div className="text-sm flex-1">
         <span className="font-medium">Trial activo:</span> {daysLeft} días restantes de tu prueba gratis
-      </p>
+      </div>
+      <button
+        aria-label="Cerrar"
+        className="text-info/80 hover:text-info p-1 rounded hover:bg-info/20"
+        onClick={() => {
+          setDismissed(true)
+          try {
+            const key = `trialBannerDismissed_${user.uid}`
+            if (typeof window !== 'undefined') {
+              window.localStorage.setItem(key, '1')
+              window.dispatchEvent(new Event('trialBanner:dismiss'))
+            }
+          } catch {}
+        }}
+      >
+        <IconX className="h-4 w-4" />
+      </button>
     </div>
   )
 }
