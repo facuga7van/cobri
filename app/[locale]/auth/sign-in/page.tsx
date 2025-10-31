@@ -14,7 +14,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { GoogleLoginButton } from "@/components/google-login-button"
-import { useTranslations, useLocale } from "next-intl"
+import { useLocale } from "next-intl"
+import { useTranslations } from '@/hooks/use-translations';
 
 export default function SignInPage() {
   const router = useRouter()

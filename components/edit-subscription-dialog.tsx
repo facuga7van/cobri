@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import dynamic from "next/dynamic"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -9,10 +10,15 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
 import { doc, updateDoc, increment } from "firebase/firestore"
+
+// Lazy load Calendar component (heavy dependency)
+const Calendar = dynamic(() => import("@/components/ui/calendar").then(mod => ({ default: mod.Calendar })), {
+  loading: () => <div className="h-[300px] flex items-center justify-center text-sm text-muted-foreground">Cargando...</div>,
+  ssr: false
+})
 
 type RowStatus = "authorized" | "paused" | "cancelled" | "pending"
 

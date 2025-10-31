@@ -9,12 +9,13 @@ import { ThemePreferenceSync } from "@/components/theme-preference-sync"
 
 export default async function LocaleLayout({
   children,
-  params: { locale }
+  params
 }: Readonly<{
   children: React.ReactNode
-  params: { locale: string }
+  params: Promise<{ locale: string }>
 }>) {
-  const messages = await getMessages()
+  const { locale } = await params
+  const messages = await getMessages({ locale })
 
   return (
     <ThemeProvider

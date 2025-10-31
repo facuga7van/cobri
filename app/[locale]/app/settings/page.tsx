@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from '@/hooks/use-translations';
+import { useLocale } from 'next-intl'
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
 import { doc, getDoc } from "firebase/firestore"

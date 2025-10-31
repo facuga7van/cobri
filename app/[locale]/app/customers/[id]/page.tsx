@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useLocale } from "next-intl"
-import { useTranslations } from "next-intl"
+import { useTranslations } from '@/hooks/use-translations';
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
 import { doc, getDoc, collection, query, where, onSnapshot, orderBy } from "firebase/firestore"

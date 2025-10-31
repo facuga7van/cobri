@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html suppressHydrationWarning>
       <body className={`font-sans ${inter.variable} antialiased`}>
         {children}
       </body>

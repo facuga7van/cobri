@@ -9,7 +9,7 @@ import { IconArrowLeft, IconMail, IconCalendar } from "@tabler/icons-react"
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
 import { doc, getDoc, updateDoc, addDoc, collection, serverTimestamp } from "firebase/firestore"
-import { useTranslations } from "next-intl"
+import { useTranslations } from '@/hooks/use-translations';
 import { useToast } from "@/hooks/use-toast"
 
 type RowStatus = "authorized" | "paused" | "cancelled" | "pending"
@@ -169,8 +169,9 @@ export default function SubscriptionDetailPage({ params }: { params: { id: strin
             <div>
               <p className="text-sm text-muted-foreground">{t('status')}</p>
               <div className="mt-1">
-                <StatusBadge status={sub.status} />
+                <StatusBadge status={sub.status} /> 
               </div>
+              <p className="font-medium">{t(sub.status)}</p>
             </div>
           </div>
         </Card>

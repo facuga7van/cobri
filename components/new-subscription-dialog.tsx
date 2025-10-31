@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import dynamic from "next/dynamic"
 import { useTranslations } from "next-intl"
 import { IconPlus } from "@tabler/icons-react"
 import { Button } from "@/components/ui/button"
@@ -9,7 +10,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
@@ -26,6 +26,12 @@ import {
   doc as docRef,
   increment,
 } from "firebase/firestore"
+
+// Lazy load Calendar component (heavy dependency)
+const Calendar = dynamic(() => import("@/components/ui/calendar").then(mod => ({ default: mod.Calendar })), {
+  loading: () => <div className="h-[300px] flex items-center justify-center text-sm text-muted-foreground">Cargando calendario...</div>,
+  ssr: false
+})
 
 export function NewSubscriptionDialog() {
   const tSubs = useTranslations('subscriptions')

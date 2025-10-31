@@ -88,6 +88,7 @@
     "tableCustomer": "Customer",
     "tablePlan": "Plan",
     "active": "Active",
+    "authorized": "Active",
     "cancelled": "Cancelled",
     "paused": "Paused",
     "monthly": "Monthly",

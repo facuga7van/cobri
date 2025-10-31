@@ -1,7 +1,9 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
-import { useLocale, useTranslations } from "next-intl"
+import dynamic from "next/dynamic"
+import { useLocale } from "next-intl";
+import { useTranslations } from '@/hooks/use-translations';
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,7 +13,11 @@ import { IconSearch, IconPlus } from "@tabler/icons-react"
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore"
-import { NewCustomerDialog } from "@/components/new-customer-dialog"
+
+// Lazy load dialog (only when user clicks "Add Customer")
+const NewCustomerDialog = dynamic(() => import("@/components/new-customer-dialog").then(mod => ({ default: mod.NewCustomerDialog })), {
+  ssr: false
+})
 
 export default function CustomersPage() {
   const [search, setSearch] = useState("")

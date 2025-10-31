@@ -102,6 +102,7 @@
     "tableCustomer": "Cliente",
     "tablePlan": "Plan",
     "active": "Activa",
+    "authorized": "Activa",
     "cancelled": "Cancelada",
     "paused": "Pausada",
     "monthly": "Mensual",

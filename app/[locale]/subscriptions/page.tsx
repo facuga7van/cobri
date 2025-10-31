@@ -1,2 +1,2 @@
-export { default } from '../app/page'
+export { default } from '../app/subscriptions/page'
 
