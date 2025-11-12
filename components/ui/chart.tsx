@@ -7,6 +7,10 @@ import type {
   TooltipProps as RechartsTooltipProps,
   ValueType,
 } from 'recharts/types/component/Tooltip'
+import type {
+  Payload as TooltipPayload,
+  Formatter as TooltipFormatter,
+} from 'recharts/types/component/DefaultTooltipContent'
 
 import { cn } from '@/lib/utils'
 
@@ -114,6 +118,8 @@ type ChartTooltipContentProps<
   TName extends NameType = NameType,
 > = RechartsTooltipProps<TValue, TName> &
   React.ComponentProps<'div'> & {
+    payload?: TooltipPayload<TValue, TName>[]
+    formatter?: TooltipFormatter<TValue, TName>
     hideLabel?: boolean
     hideIndicator?: boolean
     indicator?: 'line' | 'dot' | 'dashed'
