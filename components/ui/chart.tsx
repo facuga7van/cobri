@@ -2,17 +2,36 @@
 
 import * as React from 'react'
 import * as RechartsPrimitive from 'recharts'
+import type { TooltipProps as RechartsTooltipProps } from 'recharts'
 import type {
   NameType,
-  TooltipProps as RechartsTooltipProps,
   ValueType,
-} from 'recharts/types/component/Tooltip'
-import type {
   Payload as TooltipPayload,
   Formatter as TooltipFormatter,
 } from 'recharts/types/component/DefaultTooltipContent'
 
-import { cn } from '@/lib/utils'
+// Nota: Asumiendo que 'cn' y 'lib/utils' están disponibles en tu entorno.
+// Si no lo están, reemplaza 'cn' con una función de utilidad simple o úsalo solo como string.
+// FIX: Updated cn to handle conditional objects (like clsx) to resolve Error 2345
+const cn = (...args: unknown[]) => {
+  const classes: string[] = []
+  for (const arg of args) {
+    if (typeof arg === 'string' && arg) {
+      classes.push(arg)
+    } else if (Array.isArray(arg)) {
+      const inner = cn(...arg)
+      if (inner) classes.push(inner)
+    } else if (typeof arg === 'object' && arg !== null) {
+      for (const key in arg) {
+        // eslint-disable-next-line no-prototype-builtins
+        if (Object.prototype.hasOwnProperty.call(arg, key) && (arg as Record<string, unknown>)[key]) {
+          classes.push(key)
+        }
+      }
+    }
+  }
+  return classes.filter(Boolean).join(' ')
+}
 
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: '', dark: '.dark' } as const
@@ -99,7 +118,7 @@ ${colorConfig
     const color =
       itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
       itemConfig.color
-    return color ? `  --color-${key}: ${color};` : null
+    return color ? `  --color-${key}: ${color};` : null
   })
   .join('\n')}
 }
@@ -115,9 +134,14 @@ const ChartTooltip = RechartsPrimitive.Tooltip
 
 type ChartTooltipContentProps<
   TValue extends ValueType = ValueType,
-  TName extends NameType = NameType,
+  TName extends NameType = NameType
 > = RechartsTooltipProps<TValue, TName> &
   React.ComponentProps<'div'> & {
+    // props que Recharts pasa al contenido del tooltip
+    label?: string | number | React.ReactNode
+    labelClassName?: string
+
+    // tus extras
     payload?: TooltipPayload<TValue, TName>[]
     formatter?: TooltipFormatter<TValue, TName>
     hideLabel?: boolean
@@ -200,13 +224,14 @@ function ChartTooltipContent<
       {!nestLabel ? tooltipLabel : null}
       <div className="grid gap-1.5">
         {payload.map((item, index) => {
+          // Use the derived string 'key' instead of item.dataKey directly
           const key = `${nameKey || item.name || item.dataKey || 'value'}`
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
           const indicatorColor = color || item.payload.fill || item.color
 
           return (
             <div
-              key={item.dataKey}
+              key={key} // Usando 'key' (string) en lugar de 'item.dataKey' (DataKey<any> | undefined)
               className={cn(
                 '[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5',
                 indicator === 'dot' && 'items-center',
@@ -222,7 +247,7 @@ function ChartTooltipContent<
                     !hideIndicator && (
                       <div
                         className={cn(
-                          'shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)',
+                          'shrink-0 rounded-[2px] border-[var(--color-border)]', // Se usa var() para CSS variables
                           {
                             'h-2.5 w-2.5': indicator === 'dot',
                             'w-1': indicator === 'line',
@@ -233,7 +258,7 @@ function ChartTooltipContent<
                         )}
                         style={
                           {
-                            '--color-bg': indicatorColor,
+                            backgroundColor: indicatorColor,
                             '--color-border': indicatorColor,
                           } as React.CSSProperties
                         }
@@ -270,19 +295,26 @@ function ChartTooltipContent<
 
 const ChartLegend = RechartsPrimitive.Legend
 
+// FIX (Errors 2339 & 7006): Define explicit type for payload using imported Recharts types.
+type LegendPayload = TooltipPayload<ValueType, NameType>
+
+type ChartLegendContentProps = React.ComponentProps<'div'> & {
+  hideIcon?: boolean
+  payload?: LegendPayload[]
+  verticalAlign?: RechartsPrimitive.LegendProps['verticalAlign']
+  nameKey?: string
+}
+
 function ChartLegendContent({
   className,
   hideIcon = false,
   payload,
   verticalAlign = 'bottom',
   nameKey,
-}: React.ComponentProps<'div'> &
-  Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'> & {
-    hideIcon?: boolean
-    nameKey?: string
-  }) {
+}: ChartLegendContentProps) {
   const { config } = useChart()
 
+  // Check for payload length using optional chaining
   if (!payload?.length) {
     return null
   }
@@ -295,13 +327,13 @@ function ChartLegendContent({
         className,
       )}
     >
-      {payload.map((item) => {
+      {payload.map((item) => { // 'item' is now correctly typed as LegendPayload
         const key = `${nameKey || item.dataKey || 'value'}`
         const itemConfig = getPayloadConfigFromPayload(config, item, key)
 
         return (
           <div
-            key={item.value}
+            key={item.value as React.Key} // Aseguramos que la key sea React.Key
             className={
               '[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3'
             }
