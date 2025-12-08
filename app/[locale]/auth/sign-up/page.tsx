@@ -55,7 +55,7 @@ export default function SignUpPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-8">
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 mb-6">
+          <Link href={`/${locale}`} className="inline-flex items-center gap-2 mb-6">
             <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-xl">C</span>
             </div>
@@ -109,7 +109,7 @@ export default function SignUpPage() {
 
         <p className="text-center text-sm text-muted-foreground mt-6">
           {tAuth('alreadyHaveAccount')} {" "}
-          <Link href="/auth/sign-in" className="text-primary hover:underline">
+          <Link href={`/${locale}/auth/sign-in`} className="text-primary hover:underline">
             {tAuth('signIn')}
           </Link>
         </p>
