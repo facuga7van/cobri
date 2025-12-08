@@ -59,6 +59,11 @@
     ,"continueWithGoogle": "Continue with Google"
     ,"openInBrowser": "Open in browser"
     ,"inAppBrowserWarning": "You're using an in-app browser. For a smoother Google login, open this page in your default browser."
+    ,"emailPlaceholder": "you@example.com"
+    ,"passwordPlaceholder": "••••••••"
+    ,"namePlaceholder": "John Doe"
+    ,"errorTitle": "Error"
+    ,"signInFailed": "Sign in failed"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -152,6 +157,7 @@
     "mpIntegration": "MercadoPago integration",
     "freeTrial": "14-day free trial",
     "prioritySupport": "Priority support",
-    "noCard": "No credit card required for trial"
+    "noCard": "No credit card required for trial",
+    "month": "month"
   }
 }

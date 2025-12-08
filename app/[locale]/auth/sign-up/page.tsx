@@ -3,9 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth"
-import { auth, db } from "@/lib/firebase"
-import { doc, setDoc, serverTimestamp } from "firebase/firestore"
+import { createUserWithEmailAndPassword, updateProfile, auth, db, doc, setDoc, serverTimestamp } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -45,7 +43,7 @@ export default function SignUpPage() {
       toast({ title: tAuth('accountCreated', { default: 'Account created' }), description: tAuth('welcomeTrial', { default: 'Welcome! Starting your free trial...' }) })
       router.replace(`/${locale}`)
     } catch (err: any) {
-      toast({ title: "Error", description: err?.message ?? tAuth('signUpFailed', { default: 'Sign up failed' }) })
+      toast({ title: tAuth('errorTitle', { default: 'Error' }), description: err?.message ?? tAuth('signUpFailed', { default: 'Sign up failed' }) })
     } finally {
       setLoading(false)
     }
@@ -71,7 +69,7 @@ export default function SignUpPage() {
             <Input
               id="name"
               type="text"
-              placeholder="John Doe"
+              placeholder={tAuth('namePlaceholder', { default: 'John Doe' })}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -83,7 +81,7 @@ export default function SignUpPage() {
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={tAuth('emailPlaceholder', { default: 'you@example.com' })}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -95,7 +93,7 @@ export default function SignUpPage() {
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder={tAuth('passwordPlaceholder', { default: '••••••••' })}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

@@ -59,6 +59,11 @@
     "continueWithGoogle": "Continuar con Google"
     ,"openInBrowser": "Abrir en el navegador"
     ,"inAppBrowserWarning": "Estás usando un navegador dentro de una app. Para un acceso con Google más fluido, abrí esta página en tu navegador predeterminado."
+    ,"emailPlaceholder": "tu@correo.com"
+    ,"passwordPlaceholder": "••••••••"
+    ,"namePlaceholder": "Juan Pérez"
+    ,"errorTitle": "Error"
+    ,"signInFailed": "Error al iniciar sesión"
   },
   "dashboard": {
     "title": "Panel de Control",
@@ -161,6 +166,7 @@
     "mpIntegration": "Integración con MercadoPago",
     "freeTrial": "Prueba gratuita de 14 días",
     "prioritySupport": "Soporte prioritario",
-    "noCard": "No se requiere tarjeta de crédito para la prueba"
+    "noCard": "No se requiere tarjeta de crédito para la prueba",
+    "month": "mes"
   }
 }

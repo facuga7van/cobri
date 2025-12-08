@@ -47,6 +47,8 @@ export default function SubscriptionsPage() {
     status: RowStatus
     lastPayment?: string | null
     nextPayment?: string | null
+    lastPaymentRaw?: Date | null
+    nextPaymentRaw?: Date | null
   }>>([])
   const [editOpen, setEditOpen] = useState(false)
   const [editRow, setEditRow] = useState<EditableSubscription | null>(null)
@@ -67,19 +69,22 @@ export default function SubscriptionsPage() {
     const subsQ = query(collection(db, 'users', user.uid, 'subscriptions'), orderBy('createdAt', 'desc'))
     const unsubSubs = onSnapshot(subsQ, (snap) => {
       const list: Array<any> = []
-      const fmt = (v: any) => {
+      const parseDate = (v: any): Date | null => {
         if (!v) return null
         if (typeof v?.toDate === 'function') {
-          const d = v.toDate(); return isNaN(d.getTime()) ? null : d.toLocaleDateString()
+          const d = v.toDate(); return isNaN(d.getTime()) ? null : d
         }
         if (typeof v?.seconds === 'number') {
-          const d = new Date(v.seconds * 1000); return isNaN(d.getTime()) ? null : d.toLocaleDateString()
+          const d = new Date(v.seconds * 1000); return isNaN(d.getTime()) ? null : d
         }
-        const d = new Date(v); return isNaN(d.getTime()) ? null : d.toLocaleDateString()
+        const d = new Date(v); return isNaN(d.getTime()) ? null : d
       }
+      const formatDate = (d: Date | null) => (d ? d.toLocaleDateString() : null)
       snap.forEach((d) => {
         const s = d.data() as any
         const cust = customerMap.get(s.customerId ?? '')
+        const lastPaymentDate = parseDate(s.lastPayment)
+        const nextPaymentDate = parseDate(s.nextPayment)
         list.push({
           id: d.id,
           customerId: s.customerId ?? undefined,
@@ -89,8 +94,10 @@ export default function SubscriptionsPage() {
           price: typeof s.price === 'number' ? s.price : Number(s.price ?? 0),
           billingCycle: s.billingCycle ?? 'monthly',
           status: (['authorized','paused','cancelled','pending'].includes(s.status) ? s.status : 'authorized') as RowStatus,
-          lastPayment: fmt(s.lastPayment),
-          nextPayment: fmt(s.nextPayment),
+          lastPaymentRaw: lastPaymentDate,
+          nextPaymentRaw: nextPaymentDate,
+          lastPayment: formatDate(lastPaymentDate),
+          nextPayment: formatDate(nextPaymentDate),
         })
       })
       setRows(list)
@@ -113,7 +120,7 @@ export default function SubscriptionsPage() {
     const subRef = doc(db, 'users', user.uid, 'subscriptions', row.id)
     // Calculate new next payment from current nextPayment or today
     const now = new Date()
-    const base = row.nextPayment ? new Date(row.nextPayment) : now
+    const base = row.nextPaymentRaw ?? now
     const next = new Date(base)
     if (row.billingCycle === 'yearly') {
       next.setFullYear(next.getFullYear() + 1)
@@ -130,7 +137,14 @@ export default function SubscriptionsPage() {
       nextPayment: next,
     })
     // Optimistic UI update
-    setRows((prev) => prev.map((r) => r.id === row.id ? { ...r, lastPayment: new Date().toLocaleDateString(), nextPayment: next.toLocaleDateString() } : r))
+    const lastPaymentDate = new Date()
+    setRows((prev) => prev.map((r) => r.id === row.id ? {
+      ...r,
+      lastPaymentRaw: lastPaymentDate,
+      nextPaymentRaw: next,
+      lastPayment: lastPaymentDate.toLocaleDateString(),
+      nextPayment: next.toLocaleDateString()
+    } : r))
   }
 
   async function handlePauseResume(row: typeof rows[number]) {
@@ -242,7 +256,7 @@ export default function SubscriptionsPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => router.push(`/${locale}/subscriptions/${sub.id}`)}>{tCommon('details') ?? 'Details'}</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleMarkPaid(sub)}>{t('markPaid')}</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => { setEditRow({ id: sub.id, customerId: sub.customerId || '', plan: sub.plan, price: sub.price, billingCycle: sub.billingCycle as any, status: sub.status as any, nextPayment: sub.nextPayment || null }); setEditOpen(true) }}>{t('edit', { default: 'Edit' })}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setEditRow({ id: sub.id, customerId: sub.customerId || '', plan: sub.plan, price: sub.price, billingCycle: sub.billingCycle as any, status: sub.status as any, nextPayment: sub.nextPaymentRaw ? sub.nextPaymentRaw.toISOString() : null }); setEditOpen(true) }}>{t('edit', { default: 'Edit' })}</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handlePauseResume(sub)}>{sub.status==='paused' ? (t('resume',{default:'Resume'})) : (t('pause',{default:'Pause'}))}</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleDelete(sub)}>{tCommon('delete')}</DropdownMenuItem>
                       </DropdownMenuContent>

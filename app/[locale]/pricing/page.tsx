@@ -2,25 +2,27 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { IconCheck } from "@tabler/icons-react"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 
 export default function PricingPage() {
   const t = useTranslations('pricing')
+  const tAuth = useTranslations('auth')
+  const locale = useLocale()
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="border-b border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
+          <Link href={`/${locale}`} className="flex items-center gap-2">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">C</span>
             </div>
             <span className="text-xl font-bold">Cobri</span>
           </Link>
           <div className="flex items-center gap-4">
-            <Link href="/auth/sign-in">
+            <Link href={`/${locale}/auth/sign-in`}>
               <Button variant="ghost" size="sm">
-                Sign In
+                {tAuth('signIn')}
               </Button>
             </Link>
           </div>
@@ -37,7 +39,7 @@ export default function PricingPage() {
           <div className="text-center mb-6">
             <h2 className="text-2xl font-bold mb-2">Pro</h2>
             <div className="text-5xl font-bold mb-2">
-              $5<span className="text-xl text-muted-foreground">/month</span>
+              $5<span className="text-xl text-muted-foreground">/{t('month')}</span>
             </div>
             <p className="text-muted-foreground">{t('billedMonthly')}</p>
           </div>
@@ -51,7 +53,7 @@ export default function PricingPage() {
             ))}
           </div>
 
-          <Link href="/auth/sign-up">
+          <Link href={`/${locale}/auth/sign-up`}>
             <Button className="w-full" size="lg">
               {t('getStarted')}
             </Button>

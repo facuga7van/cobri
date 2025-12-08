@@ -5,9 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { signInWithEmailAndPassword } from "firebase/auth"
-import { auth, db } from "@/lib/firebase"
-import { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore"
+import { signInWithEmailAndPassword, auth, db, doc, setDoc, serverTimestamp, getDoc } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -83,7 +81,10 @@ export default function SignInPage() {
       toast({ title: tAuth('signIn'), description: tAuth('welcomeBack') })
       router.replace(`/${locale}`)
     } catch (err: any) {
-      toast({ title: "Error", description: err?.message ?? tAuth('signUpFailed') })
+      toast({
+        title: tAuth('errorTitle', { default: 'Error' }),
+        description: err?.message ?? tAuth('signInFailed', { default: 'Sign in failed' })
+      })
     } finally {
       setLoading(false)
     }
@@ -111,7 +112,7 @@ export default function SignInPage() {
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={tAuth('emailPlaceholder', { default: 'you@example.com' })}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -123,7 +124,7 @@ export default function SignInPage() {
             <Input
               id="password"
               type="password"
-              placeholder="••••••••"
+              placeholder={tAuth('passwordPlaceholder', { default: '••••••••' })}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

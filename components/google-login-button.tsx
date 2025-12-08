@@ -19,7 +19,7 @@ export function GoogleLoginButton() {
   const router = useRouter()
   const buttonRef = React.useRef<HTMLDivElement>(null)
   const gisInitRef = React.useRef(false)
-  const [fallback, setFallback] = React.useState(false)
+  const [fallback, setFallback] = React.useState(true) // forzar fallback (custom button) para evitar fondo blanco de GIS
   const tAuth = useTranslations('auth')
   const locale = useLocale()
 
@@ -114,10 +114,7 @@ export function GoogleLoginButton() {
   React.useEffect(() => {
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID
     // Permitimos GIS también en mobile cuando NO es un webview embebido
-    if (!clientId || isInApp) {
-      setFallback(true)
-      return
-    }
+    if (!clientId || isInApp || fallback) return
 
     function handleCredentialResponse(resp: { credential: string }) {
       const credential = GoogleAuthProvider.credential(resp.credential)
@@ -129,10 +126,7 @@ export function GoogleLoginButton() {
     }
 
     const google = window.google
-    if (!google?.accounts?.id) {
-      setFallback(true)
-      return
-    }
+    if (!google?.accounts?.id) return
 
     if (gisInitRef.current) return
     google.accounts.id.initialize({
@@ -146,15 +140,16 @@ export function GoogleLoginButton() {
     if (buttonRef.current) {
       google.accounts.id.renderButton(buttonRef.current, {
         type: 'standard',
-        theme: 'outline',
+        theme: 'filled_black', // mejor contraste en fondo oscuro
         size: 'large',
         text: 'continue_with',
         shape: 'pill',
         logo_alignment: 'left',
+        width: 320,
       })
     }
     gisInitRef.current = true
-  }, [router, toast, isInApp, handleFirebaseUser])
+  }, [router, toast, isInApp, handleFirebaseUser, fallback])
 
   const openInBrowser = () => {
     try {

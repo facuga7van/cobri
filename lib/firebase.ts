@@ -1,7 +1,7 @@
 "use client"
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app"
-import { getAuth, type Auth } from "firebase/auth"
+import { getAuth, type Auth, createUserWithEmailAndPassword, updateProfile, signInWithEmailAndPassword } from "firebase/auth"
 import { getFirestore, type Firestore } from "firebase/firestore"
 import { env } from "./env"
 
@@ -24,6 +24,13 @@ const app = initializeFirebaseApp()
 
 export const auth: Auth = getAuth(app)
 export const db: Firestore = getFirestore(app)
+// Re-export helpers para centralizar imports
+export {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth"
+export { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore"
 export default app
 
 
