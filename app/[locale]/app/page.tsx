@@ -16,7 +16,7 @@ import { collection, getDocs } from "firebase/firestore"
 const RevenueChart = dynamic(() => import('@/components/revenue-chart'), {
   loading: () => (
     <div className="h-[300px] flex items-center justify-center">
-      <div className="text-sm text-muted-foreground">Cargando gráfico...</div>
+      <div className="text-sm text-muted-foreground">...</div>
     </div>
   ),
   ssr: false
@@ -25,6 +25,7 @@ const RevenueChart = dynamic(() => import('@/components/revenue-chart'), {
 export default function DashboardPage() {
   const t = useTranslations('dashboard')
   const tSubs = useTranslations('subscriptions')
+  const tFilters = useTranslations('filters')
   const { user } = useAuth()
   const locale = useLocale()
   
@@ -131,7 +132,7 @@ export default function DashboardPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
-          <p className="text-muted-foreground">Error al cargar datos</p>
+          <p className="text-muted-foreground">{t('errorLoading')}</p>
         </div>
       </div>
     )
@@ -152,7 +153,6 @@ export default function DashboardPage() {
         customerId={customerId}
         onCustomerChange={setCustomerId}
         customers={customers}
-        locale={locale}
       />
 
       {/* KPI Cards */}
@@ -166,11 +166,11 @@ export default function DashboardPage() {
           value={`$${kpis.mrr.toFixed(2)}`}
         />
         <KpiCard
-          title="Nuevos este mes"
+          title={t('newThisMonth')}
           value={kpis.newThisMonth}
         />
         <KpiCard
-          title="Crecimiento"
+          title={t('growth')}
           value={`${kpis.growth}%`}
           delta={Math.abs(kpis.growth)}
           trend={kpis.growth >= 0 ? 'up' : 'down'}
@@ -180,13 +180,13 @@ export default function DashboardPage() {
       {/* Revenue Chart */}
       <Card className="p-6">
         <h2 className="text-lg font-semibold mb-4">
-          📈 Ingresos - {
-            period === '1' ? 'Último Mes' :
-            period === '3' ? 'Últimos 3 Meses' :
-            period === '6' ? 'Últimos 6 Meses' :
-            period === '12' ? 'Últimos 12 Meses' :
-            period === 'year' ? 'Este Año' :
-            'Todo el Tiempo'
+          {t('revenueTitle')} - {
+            period === '1' ? tFilters('lastMonth') :
+            period === '3' ? tFilters('threeMonths') :
+            period === '6' ? tFilters('sixMonths') :
+            period === '12' ? tFilters('twelveMonths') :
+            period === 'year' ? tFilters('thisYear') :
+            tFilters('allTime')
           }
         </h2>
         <div className="h-[300px]">
@@ -199,16 +199,16 @@ export default function DashboardPage() {
         <Card className="p-6">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <IconCalendar className="h-5 w-5" />
-            🔔 Próximos Cobros (7 días)
+            {t('upcomingCharges')}
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="border-b border-border">
                 <tr>
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">Cliente</th>
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">Plan</th>
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">Monto</th>
-                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">Fecha</th>
+                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('tableCustomer')}</th>
+                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('tablePlan')}</th>
+                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('tableAmount')}</th>
+                  <th className="text-left p-3 text-sm font-medium text-muted-foreground">{t('tableDate')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -231,9 +231,9 @@ export default function DashboardPage() {
         <Card className="p-12 text-center">
           <div className="max-w-md mx-auto">
             <IconCurrencyDollar className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">No hay suscripciones aún</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('noSubscriptionsYet')}</h3>
             <p className="text-muted-foreground mb-4">
-              Comienza creando tu primera suscripción para ver el dashboard
+              {t('noSubscriptionsDesc')}
             </p>
           </div>
         </Card>

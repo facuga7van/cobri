@@ -71,7 +71,32 @@
     "totalRevenue": "Ingresos Totales",
     "activeSubscriptions": "Suscripciones Activas",
     "monthlyRecurring": "Recurrente Mensual",
-    "churnRate": "Tasa de Abandono"
+    "churnRate": "Tasa de Abandono",
+    "newThisMonth": "Nuevos este mes",
+    "growth": "Crecimiento",
+    "revenueTitle": "Ingresos",
+    "upcomingCharges": "Próximos Cobros (7 días)",
+    "noSubscriptionsYet": "No hay suscripciones aún",
+    "noSubscriptionsDesc": "Comienza creando tu primera suscripción para ver el dashboard",
+    "errorLoading": "Error al cargar datos",
+    "loadingChart": "Cargando gráfico...",
+    "tableCustomer": "Cliente",
+    "tablePlan": "Plan",
+    "tableAmount": "Monto",
+    "tableDate": "Fecha"
+  },
+  "filters": {
+    "filters": "Filtros",
+    "period": "Período",
+    "customer": "Cliente",
+    "allCustomers": "Todos los clientes",
+    "clearFilters": "Limpiar filtros",
+    "lastMonth": "Último mes",
+    "threeMonths": "3 meses",
+    "sixMonths": "6 meses",
+    "twelveMonths": "12 meses",
+    "thisYear": "Este año",
+    "allTime": "Todo el tiempo"
   },
   "subscriptions": {
     "notFound": "Suscripción no encontrada",

@@ -43,14 +43,11 @@ export function TrialBanner() {
     ;(async () => {
       try {
         const ref = doc(db, "users", user.uid)
-        console.log("users", user.uid)
         let snap
         try {
           snap = await getDocFromServer(ref)
-          console.log("getDoc", snap)
         } catch (e) {
           snap = await getDoc(ref)
-          console.log("getDoc", snap)
         }
         if (!snap?.exists?.()) {
           if (!cancelled) {
@@ -61,7 +58,7 @@ export function TrialBanner() {
         }
         const data = snap.data() as any
         const currentStatus: string | null = typeof data?.subscriptionStatus === 'string' ? data.subscriptionStatus : null
-        const trialEndsAtRaw = data?.trialEndsAt ?? data?.trialEndAt ?? data?.trialsEndsAt
+        const trialEndsAtRaw = data?.trialEndsAt
         const trialEnd = parseFirestoreDate(trialEndsAtRaw)
         const localDaysLeft = trialEnd ? computeDaysLeft(trialEnd) : null
 

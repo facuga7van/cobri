@@ -71,7 +71,32 @@
     "totalRevenue": "Total Revenue",
     "activeSubscriptions": "Active Subscriptions",
     "monthlyRecurring": "Monthly Recurring",
-    "churnRate": "Churn Rate"
+    "churnRate": "Churn Rate",
+    "newThisMonth": "New this month",
+    "growth": "Growth",
+    "revenueTitle": "Revenue",
+    "upcomingCharges": "Upcoming Charges (7 days)",
+    "noSubscriptionsYet": "No subscriptions yet",
+    "noSubscriptionsDesc": "Start by creating your first subscription to see the dashboard",
+    "errorLoading": "Error loading data",
+    "loadingChart": "Loading chart...",
+    "tableCustomer": "Customer",
+    "tablePlan": "Plan",
+    "tableAmount": "Amount",
+    "tableDate": "Date"
+  },
+  "filters": {
+    "filters": "Filters",
+    "period": "Period",
+    "customer": "Customer",
+    "allCustomers": "All customers",
+    "clearFilters": "Clear filters",
+    "lastMonth": "Last month",
+    "threeMonths": "3 months",
+    "sixMonths": "6 months",
+    "twelveMonths": "12 months",
+    "thisYear": "This year",
+    "allTime": "All time"
   },
   "subscriptions": {
     "title": "Subscriptions",
