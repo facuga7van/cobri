@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server"
 import { verifyAuth, isAuthError } from "@/lib/api-auth"
+import { preApproval } from "@/lib/mercadopago"
+import { adminDb } from "@/lib/firebase-admin"
 import { z } from "zod"
 
 const createPreapprovalSchema = z.object({
   subscriptionId: z.string().min(1),
+  customerEmail: z.string().email(),
   plan: z.string().min(1),
   price: z.number().positive(),
   billingCycle: z.enum(["monthly", "yearly"]),
@@ -30,19 +33,54 @@ export async function POST(request: Request) {
       )
     }
 
-    // TODO: Replace with real MercadoPago SDK integration
-    // const mp = new MercadoPago({ accessToken: process.env.MP_ACCESS_TOKEN })
-    // const preapproval = await mp.preapproval.create({ ... })
+    const { subscriptionId, customerEmail, plan, price, billingCycle } = parsed.data
+    const { userId } = auth
+
+    // Determine frequency based on billing cycle
+    const frequency = billingCycle === "yearly" ? 12 : 1
+    const frequencyType = "months"
+
+    // Build callback URL
+    const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+    const backUrl = `${origin}/es/app/subscriptions`
+
+    // Create MercadoPago preapproval (subscription)
+    const result = await preApproval.create({
+      body: {
+        reason: plan,
+        external_reference: `${userId}__${subscriptionId}`,
+        payer_email: customerEmail,
+        auto_recurring: {
+          frequency,
+          frequency_type: frequencyType,
+          transaction_amount: price,
+          currency_id: "ARS",
+        },
+        back_url: backUrl,
+        status: "pending",
+      },
+    })
+
+    // Save MercadoPago preapproval ID to the subscription document
+    await adminDb
+      .collection("users")
+      .doc(userId)
+      .collection("subscriptions")
+      .doc(subscriptionId)
+      .update({
+        mercadopagoId: result.id,
+        mercadopagoStatus: result.status,
+      })
 
     return NextResponse.json({
-      authorizationUrl: "https://example.com/mercadopago/authorize",
-      preapprovalId: "mock-preapproval-123",
-      message: "MercadoPago integration pending - this is a placeholder response",
+      id: result.id,
+      initPoint: result.init_point,
+      status: result.status,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in POST /api/subscriptions/create-preapproval:", error)
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: error?.message ?? "Internal server error" },
       { status: 500 }
     )
   }
