@@ -15,10 +15,13 @@ import { ThemeSwitch } from "@/components/theme-switch"
 import { ChangePasswordForm } from "@/components/change-password-form"
 import { useToast } from "@/hooks/use-toast"
 import { IconEdit } from "@tabler/icons-react"
+import { isTrialExpired, isPaidUser, trialDaysLeft } from "@/lib/trial-utils"
+import Link from "next/link"
 
 export default function SettingsPage() {
   const t = useTranslations('settings')
   const tAuth = useTranslations('auth')
+  const tUpgrade = useTranslations('upgrade')
   const { user } = useAuth()
   const { toast } = useToast()
   const locale = useLocale()
@@ -29,6 +32,8 @@ export default function SettingsPage() {
   const [editing, setEditing] = useState(false)
   const [editName, setEditName] = useState("")
   const [saving, setSaving] = useState(false)
+  const [planStatus, setPlanStatus] = useState<string>("")
+  const [showUpgrade, setShowUpgrade] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -44,8 +49,21 @@ export default function SettingsPage() {
       let d: Date | null = null
       if (ts?.toDate) d = ts.toDate(); else if (ts?.seconds) d = new Date(ts.seconds * 1000); else if (ts) d = new Date(ts)
       setJoined(d ? d.toLocaleDateString(locale) : "—")
+      const subStatus = data?.subscriptionStatus ?? null
+      const trialEnd = data?.trialEndsAt
+      if (isPaidUser(subStatus)) {
+        setPlanStatus(tUpgrade('proPlan'))
+        setShowUpgrade(false)
+      } else if (isTrialExpired(subStatus, trialEnd)) {
+        setPlanStatus(tUpgrade('trialExpiredLabel'))
+        setShowUpgrade(true)
+      } else {
+        const days = trialDaysLeft(subStatus, trialEnd)
+        setPlanStatus(tUpgrade('trialDaysLeft', { days }))
+        setShowUpgrade(false)
+      }
     })()
-  }, [user, locale])
+  }, [user, locale, tUpgrade])
 
   async function handleSaveProfile() {
     if (!user || !editName.trim()) return
@@ -113,6 +131,18 @@ export default function SettingsPage() {
           <div>
             <ThemeSwitch />
           </div>
+        </div>
+      </Card>
+
+      <Card className="p-6">
+        <h2 className="text-lg font-semibold mb-4">{tUpgrade('currentPlan')}</h2>
+        <div className="flex items-center justify-between">
+          <p className="font-medium">{planStatus}</p>
+          {showUpgrade && (
+            <Link href={`/${locale}/app/upgrade`}>
+              <Button size="sm">{tUpgrade('upgradeNow')}</Button>
+            </Link>
+          )}
         </div>
       </Card>
 
