@@ -12,3 +12,4 @@ const client = new MercadoPagoConfig({
 
 export const preApproval = new PreApproval(client)
 export { client }
+export const mpWebhookSecret = process.env.MP_WEBHOOK_SECRET ?? ""

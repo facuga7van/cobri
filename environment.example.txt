@@ -58,3 +58,9 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
 # - Para producción, configura estas variables en tu plataforma de hosting (Vercel, etc.)
 #
 
+# ============================================
+# MERCADOPAGO CONFIGURATION
+# ============================================
+
+# MercadoPago Webhook Secret (from MP Dashboard > Webhooks)
+MP_WEBHOOK_SECRET=your_webhook_secret_here

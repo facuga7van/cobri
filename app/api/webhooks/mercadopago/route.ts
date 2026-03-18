@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server"
 import { preApproval } from "@/lib/mercadopago"
+import { mpWebhookSecret } from "@/lib/mercadopago"
 import { adminDb } from "@/lib/firebase-admin"
 import { FieldValue } from "firebase-admin/firestore"
+import { verifyMercadoPagoSignature } from "@/lib/webhook-verify"
 
 /**
  * MercadoPago Webhook Handler
@@ -15,6 +17,20 @@ export async function POST(request: Request) {
     const body = await request.json().catch(() => null)
     if (!body) {
       return NextResponse.json({ error: "Invalid body" }, { status: 400 })
+    }
+
+    // Verify webhook signature
+    const xSignature = request.headers.get("x-signature")
+    const xRequestId = request.headers.get("x-request-id")
+    const url = new URL(request.url)
+    const dataId = url.searchParams.get("data.id") ?? body?.data?.id?.toString() ?? ""
+
+    if (mpWebhookSecret) {
+      if (!verifyMercadoPagoSignature(xSignature, xRequestId, dataId, mpWebhookSecret)) {
+        return NextResponse.json({ error: "Invalid signature" }, { status: 401 })
+      }
+    } else {
+      console.warn("MP_WEBHOOK_SECRET not set — webhook signature verification is DISABLED")
     }
 
     const { type, data } = body
