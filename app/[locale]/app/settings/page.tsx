@@ -2,25 +2,33 @@
 
 import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
-import { useTranslations } from '@/hooks/use-translations';
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useTranslations } from '@/hooks/use-translations'
 import { useLocale } from 'next-intl'
 import { useAuth } from "@/components/auth-provider"
-import { db } from "@/lib/firebase"
-import { doc, getDoc } from "firebase/firestore"
+import { db, auth, updateProfile } from "@/lib/firebase"
+import { doc, getDoc, updateDoc } from "firebase/firestore"
 import { useTheme } from "next-themes"
 import { ThemeSwitch } from "@/components/theme-switch"
+import { ChangePasswordForm } from "@/components/change-password-form"
+import { useToast } from "@/hooks/use-toast"
+import { IconEdit } from "@tabler/icons-react"
 
 export default function SettingsPage() {
   const t = useTranslations('settings')
   const tAuth = useTranslations('auth')
-  const tTheme = useTranslations('theme')
   const { user } = useAuth()
-  const { resolvedTheme } = useTheme()
+  const { toast } = useToast()
   const locale = useLocale()
 
-  const [name, setName] = useState<string>("")
-  const [email, setEmail] = useState<string>("")
-  const [joined, setJoined] = useState<string>("")
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [joined, setJoined] = useState("")
+  const [editing, setEditing] = useState(false)
+  const [editName, setEditName] = useState("")
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -29,7 +37,9 @@ export default function SettingsPage() {
       const ref = doc(db, 'users', user.uid)
       const snap = await getDoc(ref)
       const data = snap.data() as any
-      setName(data?.displayName ?? user.displayName ?? "")
+      const displayName = data?.displayName ?? user.displayName ?? ""
+      setName(displayName)
+      setEditName(displayName)
       const ts = data?.createdAt
       let d: Date | null = null
       if (ts?.toDate) d = ts.toDate(); else if (ts?.seconds) d = new Date(ts.seconds * 1000); else if (ts) d = new Date(ts)
@@ -37,33 +47,76 @@ export default function SettingsPage() {
     })()
   }, [user, locale])
 
+  async function handleSaveProfile() {
+    if (!user || !editName.trim()) return
+    setSaving(true)
+    try {
+      const trimmedName = editName.trim()
+      // Update Firebase Auth profile
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, { displayName: trimmedName })
+      }
+      // Update Firestore user doc
+      const ref = doc(db, 'users', user.uid)
+      await updateDoc(ref, { displayName: trimmedName })
+      setName(trimmedName)
+      setEditing(false)
+      toast({ title: t('profileUpdated') })
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">{t('title')}</h1>
-        <p className="text-muted-foreground">{t('overview', { default: 'View your account information' })}</p>
+        <p className="text-muted-foreground">{t('overview')}</p>
       </div>
 
       <Card className="p-6">
-        <h2 className="text-lg font-semibold mb-4">{t('profile')}</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">{t('profile')}</h2>
+          {!editing && (
+            <Button variant="outline" size="sm" onClick={() => { setEditName(name); setEditing(true) }}>
+              <IconEdit className="h-4 w-4 mr-2" />
+              {t('editProfile')}
+            </Button>
+          )}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">{tAuth('email')}</p>
             <p className="font-medium break-all">{email || '—'}</p>
           </div>
           <div>
-            <p className="text-muted-foreground">{t('joined', { default: 'Joined' })}</p>
+            <p className="text-muted-foreground">{t('joined')}</p>
             <p className="font-medium">{joined}</p>
           </div>
           <div>
-            <p className="text-muted-foreground">{t('account')}</p>
-            <p className="font-medium">{name || '—'}</p>
+            {editing ? (
+              <div className="space-y-2">
+                <Label htmlFor="edit-display-name">{t('displayName')}</Label>
+                <div className="flex gap-2">
+                  <Input id="edit-display-name" value={editName} onChange={(e) => setEditName(e.target.value)} />
+                  <Button size="sm" onClick={handleSaveProfile} disabled={saving}>{t('profileUpdated', { default: 'Save' }).split(' ')[0]}</Button>
+                  <Button size="sm" variant="outline" onClick={() => setEditing(false)}>✕</Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <p className="text-muted-foreground">{t('displayName')}</p>
+                <p className="font-medium">{name || '—'}</p>
+              </>
+            )}
           </div>
           <div>
-            <ThemeSwitch />          
+            <ThemeSwitch />
           </div>
         </div>
       </Card>
+
+      <ChangePasswordForm />
     </div>
   )
 }
