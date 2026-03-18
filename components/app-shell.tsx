@@ -19,14 +19,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const locale = useLocale()
 
   const isPricing = pathname === `/${locale}/pricing`
+  const isLanding = pathname === `/${locale}`
   const isAuthRoute = pathname?.startsWith(`/${locale}/auth`)
   const isUpgradePage = pathname === `/${locale}/app/upgrade`
 
   React.useEffect(() => {
-    if (!loading && !user && !isPricing && !isAuthRoute) {
+    if (!loading && !user && !isPricing && !isAuthRoute && !isLanding) {
       router.replace(`/${locale}/pricing`)
     }
-  }, [loading, user, isPricing, isAuthRoute, router, locale])
+  }, [loading, user, isPricing, isAuthRoute, isLanding, router, locale])
 
   React.useEffect(() => {
     if (!loading && user && isAuthRoute) {
@@ -53,7 +54,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (loading) return null
 
   if (!user) {
-    if (isPricing || isAuthRoute) return <>{children}</>
+    if (isPricing || isAuthRoute || isLanding) return <>{children}</>
     return null
   }
 
