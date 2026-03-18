@@ -77,10 +77,10 @@ export async function POST(request: Request) {
       initPoint: result.init_point,
       status: result.status,
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in POST /api/subscriptions/create-preapproval:", error)
     return NextResponse.json(
-      { error: error?.message ?? "Internal server error" },
+      { error: "Internal server error" },
       { status: 500 }
     )
   }
