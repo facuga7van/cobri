@@ -6,11 +6,16 @@ import { useLocale } from "next-intl"
 import { useTranslations } from '@/hooks/use-translations';
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
-import { doc, getDoc, collection, query, where, onSnapshot, orderBy } from "firebase/firestore"
+import { doc, getDoc, collection, query, where, onSnapshot, orderBy, getDocs } from "firebase/firestore"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/status-badge"
-import { IconArrowLeft } from "@tabler/icons-react"
+import { IconArrowLeft, IconEdit, IconTrash } from "@tabler/icons-react"
+import { useToast } from "@/hooks/use-toast"
+import { useRouter } from "next/navigation"
+import { EditCustomerDialog } from "@/components/edit-customer-dialog"
+import { DeleteCustomerDialog } from "@/components/delete-customer-dialog"
+import { PaymentHistoryTable, PaymentRecord } from "@/components/payment-history-table"
 
 type RowStatus = "authorized" | "paused" | "cancelled" | "pending"
 
@@ -23,7 +28,7 @@ export default function CustomerDetailPage({ params }: { params: { id: string, l
 
   const [loading, setLoading] = useState(true)
   const [notFound, setNotFound] = useState(false)
-  const [customer, setCustomer] = useState<{ name: string; email: string } | null>(null)
+  const [customer, setCustomer] = useState<{ name: string; email: string; phone?: string; notes?: string } | null>(null)
   const [subs, setSubs] = useState<Array<{
     id: string
     plan: string
@@ -33,6 +38,14 @@ export default function CustomerDetailPage({ params }: { params: { id: string, l
     lastPayment?: string | null
     nextPayment?: string | null
   }>>([])
+
+  const { toast } = useToast()
+  const router = useRouter()
+
+  const [editOpen, setEditOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [payments, setPayments] = useState<PaymentRecord[]>([])
+  const [loadingPayments, setLoadingPayments] = useState(true)
 
   useEffect(() => {
     if (!user) return
@@ -45,7 +58,7 @@ export default function CustomerDetailPage({ params }: { params: { id: string, l
         return
       }
       const data = snap.data() as any
-      setCustomer({ name: data.name ?? '', email: data.email ?? '' })
+      setCustomer({ name: data.name ?? '', email: data.email ?? '', phone: data.phone ?? undefined, notes: data.notes ?? undefined })
       setLoading(false)
     })()
   }, [user, params.id])
@@ -81,6 +94,58 @@ export default function CustomerDetailPage({ params }: { params: { id: string, l
     return () => unsub()
   }, [user, params.id])
 
+  const subIds = useMemo(() => subs.map(s => s.id).join(','), [subs])
+
+  // Fetch consolidated payments from all customer subscriptions
+  useEffect(() => {
+    if (!user || subs.length === 0) {
+      setPayments([])
+      setLoadingPayments(false)
+      return
+    }
+    setLoadingPayments(true)
+    ;(async () => {
+      try {
+        const allPayments: PaymentRecord[] = []
+        for (const sub of subs) {
+          const paymentsSnap = await getDocs(
+            query(
+              collection(db, 'users', user.uid, 'subscriptions', sub.id, 'payments'),
+              orderBy('date', 'desc')
+            )
+          )
+          paymentsSnap.forEach((d) => {
+            const data = d.data() as any
+            // Normalize: webhook uses `date`, manual uses `paidAt`
+            const rawDate = data.date ?? data.paidAt
+            let date: Date
+            if (rawDate?.toDate) date = rawDate.toDate()
+            else if (rawDate?.seconds) date = new Date(rawDate.seconds * 1000)
+            else date = new Date(rawDate)
+
+            allPayments.push({
+              id: d.id,
+              date,
+              amount: data.amount ?? 0,
+              source: data.source ?? 'manual',
+              mercadopagoId: data.mercadopagoId,
+              subscriptionPlan: sub.plan,
+            })
+          })
+        }
+        // Sort all payments by date descending
+        allPayments.sort((a, b) => {
+          const da = a.date instanceof Date ? a.date.getTime() : new Date(a.date).getTime()
+          const db2 = b.date instanceof Date ? b.date.getTime() : new Date(b.date).getTime()
+          return db2 - da
+        })
+        setPayments(allPayments)
+      } finally {
+        setLoadingPayments(false)
+      }
+    })()
+  }, [user, subIds])
+
   if (loading) return <div className="p-6 text-sm text-muted-foreground">{tCommon('loading')}</div>
   if (notFound || !customer) return <div className="p-6 text-sm text-muted-foreground">{tCust('notFound', { default: 'Customer not found' })}</div>
 
@@ -93,9 +158,21 @@ export default function CustomerDetailPage({ params }: { params: { id: string, l
             {tCommon('back')}
           </Button>
         </Link>
-        <div>
+        <div className="flex-1">
           <h1 className="text-2xl sm:text-3xl font-bold">{customer.name}</h1>
           <p className="text-muted-foreground break-all">{customer.email}</p>
+          {customer.phone && <p className="text-sm text-muted-foreground">{customer.phone}</p>}
+          {customer.notes && <p className="text-sm text-muted-foreground mt-1 italic">{customer.notes}</p>}
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => setEditOpen(true)}>
+            <IconEdit className="h-4 w-4 mr-2" />
+            {tCommon('edit')}
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setDeleteOpen(true)}>
+            <IconTrash className="h-4 w-4 mr-2" />
+            {tCommon('delete')}
+          </Button>
         </div>
       </div>
 
@@ -133,6 +210,32 @@ export default function CustomerDetailPage({ params }: { params: { id: string, l
           </div>
         )}
       </Card>
+
+      <PaymentHistoryTable
+        payments={payments}
+        showSubscriptionColumn={true}
+        loading={loadingPayments}
+      />
+
+      <EditCustomerDialog
+        customer={customer ? { id: params.id, ...customer } : null}
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        onSaved={(updated) => {
+          setCustomer((prev) => prev ? { ...prev, ...updated } : prev)
+          toast({ title: tCust('customerUpdated') })
+        }}
+      />
+
+      <DeleteCustomerDialog
+        customer={customer ? { id: params.id, name: customer.name } : null}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onDeleted={() => {
+          toast({ title: tCust('customerDeleted') })
+          router.push(`/${locale}/app/customers`)
+        }}
+      />
     </div>
   )
 }
