@@ -8,7 +8,8 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/status-badge"
-import { IconSearch, IconPlus, IconChevronRight } from "@tabler/icons-react"
+import { IconSearch, IconPlus, IconChevronRight, IconDownload } from "@tabler/icons-react"
+import { downloadCsv } from "@/lib/csv-utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
@@ -115,6 +116,19 @@ export default function SubscriptionsPage() {
     })
   }, [rows, search, statusFilter])
 
+  function handleExportCsv() {
+    const csvData = rows.map(s => ({
+      Customer: s.customerName ?? "—",
+      Plan: s.plan,
+      Price: s.price,
+      "Billing Cycle": s.billingCycle,
+      Status: s.status,
+      "Next Payment": s.nextPayment ?? "—",
+      "Last Payment": s.lastPayment ?? "—",
+    }))
+    downloadCsv(csvData, "cobri-subscriptions")
+  }
+
   async function handleMarkPaid(row: typeof rows[number]) {
     if (!user) return
     const subRef = doc(db, 'users', user.uid, 'subscriptions', row.id)
@@ -167,7 +181,13 @@ export default function SubscriptionsPage() {
           <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
           <p className="text-muted-foreground">{t('description')}</p>
         </div>
-        <NewSubscriptionDialog />
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleExportCsv}>
+            <IconDownload className="h-4 w-4 mr-2" />
+            {tCommon('exportCsv')}
+          </Button>
+          <NewSubscriptionDialog />
+        </div>
       </div>
 
       {/* Filters */}
