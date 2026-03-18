@@ -48,6 +48,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true })
     }
 
+    // Check if this is a Cobri platform subscription (not a client subscription)
+    if (preapprovalData.external_reference.startsWith("cobri__")) {
+      const cobriUserId = preapprovalData.external_reference.replace("cobri__", "")
+      if (!cobriUserId) {
+        return NextResponse.json({ received: true })
+      }
+
+      // Map status for platform subscription
+      let platformStatus: string
+      switch (preapprovalData.status) {
+        case "authorized": platformStatus = "authorized"; break
+        case "paused": platformStatus = "paused"; break
+        case "cancelled": platformStatus = "cancelled"; break
+        default: platformStatus = "trial"; break
+      }
+
+      // Update user's subscriptionStatus directly
+      const userRef = adminDb.collection("users").doc(cobriUserId)
+      await userRef.update({ subscriptionStatus: platformStatus })
+
+      console.log(`Webhook: updated Cobri platform subscription for user ${cobriUserId} to ${platformStatus}`)
+      return NextResponse.json({ received: true, status: platformStatus })
+    }
+
     // Parse external_reference: "userId__subscriptionId"
     const [userId, subscriptionId] = preapprovalData.external_reference.split("__")
     if (!userId || !subscriptionId) {
