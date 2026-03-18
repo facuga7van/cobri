@@ -250,5 +250,20 @@
     "trialExpiredLabel": "Trial expirado",
     "proPlan": "Pro",
     "upgradeNow": "Actualizar ahora"
+  },
+  "landing": {
+    "hero": "Gestioná tus suscripciones y cobros recurrentes",
+    "heroSub": "Cobri te ayuda a trackear clientes, automatizar cobros con MercadoPago y ver cuánto facturás en tiempo real.",
+    "cta": "Empezar gratis",
+    "ctaSignIn": "Ya tengo cuenta",
+    "feature1Title": "Clientes organizados",
+    "feature1Desc": "Agregá, editá y organizá tu base de clientes en un solo lugar.",
+    "feature2Title": "Cobros automáticos",
+    "feature2Desc": "Integrá MercadoPago y cobrá automáticamente cada mes.",
+    "feature3Title": "Dashboard en tiempo real",
+    "feature3Desc": "Visualizá ingresos, suscripciones activas y métricas de tu negocio.",
+    "feature4Title": "Historial completo",
+    "feature4Desc": "Consultá el historial de pagos de cada cliente y suscripción.",
+    "footerText": "Cobri — Gestión de suscripciones recurrentes"
   }
 }

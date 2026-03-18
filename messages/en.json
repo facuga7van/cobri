@@ -241,5 +241,20 @@
     "trialExpiredLabel": "Trial expired",
     "proPlan": "Pro",
     "upgradeNow": "Upgrade now"
+  },
+  "landing": {
+    "hero": "Manage your subscriptions and recurring payments",
+    "heroSub": "Cobri helps you track clients, automate payments with MercadoPago, and see your revenue in real time.",
+    "cta": "Start for free",
+    "ctaSignIn": "I already have an account",
+    "feature1Title": "Organized clients",
+    "feature1Desc": "Add, edit, and organize your client base in one place.",
+    "feature2Title": "Automatic payments",
+    "feature2Desc": "Integrate MercadoPago and collect payments automatically every month.",
+    "feature3Title": "Real-time dashboard",
+    "feature3Desc": "Visualize revenue, active subscriptions, and business metrics.",
+    "feature4Title": "Complete history",
+    "feature4Desc": "Check payment history for each client and subscription.",
+    "footerText": "Cobri — Recurring subscription management"
   }
 }
