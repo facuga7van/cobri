@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { doc, updateDoc, addDoc, serverTimestamp, deleteDoc } from "firebase/firestore"
 import { type EditableSubscription } from "@/components/edit-subscription-dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 
 // Lazy load heavy dialogs (only load when needed)
 const NewSubscriptionDialog = dynamic(() => import("@/components/new-subscription-dialog").then(mod => ({ default: mod.NewSubscriptionDialog })), {
@@ -51,8 +52,10 @@ export default function SubscriptionsPage() {
     lastPaymentRaw?: Date | null
     nextPaymentRaw?: Date | null
   }>>([])
+  const [loading, setLoading] = useState(true)
   const [editOpen, setEditOpen] = useState(false)
   const [editRow, setEditRow] = useState<EditableSubscription | null>(null)
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   useEffect(() => {
     if (!user) return
@@ -69,6 +72,7 @@ export default function SubscriptionsPage() {
 
     const subsQ = query(collection(db, 'users', user.uid, 'subscriptions'), orderBy('createdAt', 'desc'))
     const unsubSubs = onSnapshot(subsQ, (snap) => {
+      setLoading(false)
       const list: Array<any> = []
       const parseDate = (v: any): Date | null => {
         if (!v) return null
@@ -169,13 +173,14 @@ export default function SubscriptionsPage() {
     setRows((prev)=>prev.map((r)=>r.id===row.id?{...r, status: newStatus as any}:r))
   }
 
-  async function handleDelete(row: typeof rows[number]) {
-    if (!user) return
-    await deleteDoc(doc(db, 'users', user.uid, 'subscriptions', row.id))
+  async function handleDeleteConfirmed() {
+    if (!user || !deleteConfirmId) return
+    await deleteDoc(doc(db, 'users', user.uid, 'subscriptions', deleteConfirmId))
+    setDeleteConfirmId(null)
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in-up">
       <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-0 flex-col sm:flex-row">
         <div>
           <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
@@ -232,62 +237,114 @@ export default function SubscriptionsPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredSubscriptions.map((sub) => (
-                <tr
-                  key={sub.id}
-                  className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer"
-                >
-                  <td className="p-3 md:p-4">
-                    <div>
-                      <p className="font-medium">{sub.customerName}</p>
-                      <p className="text-sm text-muted-foreground">{sub.email}</p>
-                    </div>
-                  </td>
-                  <td className="p-3 md:p-4">
-                    <div>
-                      <p className="font-medium">{sub.plan}</p>
-                      <p className="text-sm text-muted-foreground">${sub.price}/{sub.billingCycle === 'yearly' ? 'yr' : 'mo'}</p>
-                    </div>
-                  </td>
-                  <td className="p-3 md:p-4">
-                    <StatusBadge status={sub.status} />
-                  </td>
-                  <td className="p-3 md:p-4 text-sm hidden sm:table-cell">{sub.lastPayment}</td>
-                  <td className="p-3 md:p-4 text-sm hidden sm:table-cell">{sub.nextPayment}</td>
-                  <td
-                    className="p-3 md:p-4 text-right"
-                    onClick={(e) => e.stopPropagation()}
-                    onMouseDown={(e) => e.stopPropagation()}
-                    onPointerDown={(e) => e.stopPropagation()}
-                  >
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => e.stopPropagation()}
-                          onMouseDown={(e) => e.stopPropagation()}
-                          onPointerDown={(e) => e.stopPropagation()}
-                          onKeyDown={(e) => e.stopPropagation()}
-                        >
-                          <IconChevronRight className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.push(`/${locale}/app/subscriptions/${sub.id}`)}>{tCommon('details') ?? 'Details'}</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleMarkPaid(sub)}>{t('markPaid')}</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => { setEditRow({ id: sub.id, customerId: sub.customerId || '', plan: sub.plan, price: sub.price, billingCycle: sub.billingCycle as any, status: sub.status as any, nextPayment: sub.nextPaymentRaw ? sub.nextPaymentRaw.toISOString() : null }); setEditOpen(true) }}>{t('edit', { default: 'Edit' })}</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handlePauseResume(sub)}>{sub.status==='paused' ? (t('resume',{default:'Resume'})) : (t('pause',{default:'Pause'}))}</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDelete(sub)}>{tCommon('delete')}</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="border-b border-border last:border-0">
+                    <td className="p-3 md:p-4">
+                      <div className="space-y-1.5">
+                        <div className="h-4 w-32 rounded bg-muted animate-pulse" />
+                        <div className="h-3 w-24 rounded bg-muted animate-pulse" />
+                      </div>
+                    </td>
+                    <td className="p-3 md:p-4">
+                      <div className="space-y-1.5">
+                        <div className="h-4 w-24 rounded bg-muted animate-pulse" />
+                        <div className="h-3 w-16 rounded bg-muted animate-pulse" />
+                      </div>
+                    </td>
+                    <td className="p-3 md:p-4">
+                      <div className="h-5 w-20 rounded-full bg-muted animate-pulse" />
+                    </td>
+                    <td className="p-3 md:p-4 hidden sm:table-cell">
+                      <div className="h-4 w-20 rounded bg-muted animate-pulse" />
+                    </td>
+                    <td className="p-3 md:p-4 hidden sm:table-cell">
+                      <div className="h-4 w-20 rounded bg-muted animate-pulse" />
+                    </td>
+                    <td className="p-3 md:p-4 text-right">
+                      <div className="h-8 w-8 rounded bg-muted animate-pulse ml-auto" />
+                    </td>
+                  </tr>
+                ))
+              ) : filteredSubscriptions.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="py-16 text-center text-muted-foreground">
+                    <IconSearch className="h-8 w-8 mx-auto mb-3 opacity-40" />
+                    <p className="text-sm">{t('noResults')}</p>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredSubscriptions.map((sub) => (
+                  <tr
+                    key={sub.id}
+                    className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer"
+                  >
+                    <td className="p-3 md:p-4">
+                      <div>
+                        <p className="font-medium">{sub.customerName}</p>
+                        <p className="text-sm text-muted-foreground">{sub.email}</p>
+                      </div>
+                    </td>
+                    <td className="p-3 md:p-4">
+                      <div>
+                        <p className="font-medium">{sub.plan}</p>
+                        <p className="text-sm text-muted-foreground">${sub.price}/{sub.billingCycle === 'yearly' ? 'yr' : 'mo'}</p>
+                      </div>
+                    </td>
+                    <td className="p-3 md:p-4">
+                      <StatusBadge status={sub.status} />
+                    </td>
+                    <td className="p-3 md:p-4 text-sm hidden sm:table-cell">{sub.lastPayment}</td>
+                    <td className="p-3 md:p-4 text-sm hidden sm:table-cell">{sub.nextPayment}</td>
+                    <td
+                      className="p-3 md:p-4 text-right"
+                      onClick={(e) => e.stopPropagation()}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onPointerDown={(e) => e.stopPropagation()}
+                    >
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => e.stopPropagation()}
+                            onMouseDown={(e) => e.stopPropagation()}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onKeyDown={(e) => e.stopPropagation()}
+                          >
+                            <IconChevronRight className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => router.push(`/${locale}/app/subscriptions/${sub.id}`)}>{tCommon('details') ?? 'Details'}</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleMarkPaid(sub)}>{t('markPaid')}</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => { setEditRow({ id: sub.id, customerId: sub.customerId || '', plan: sub.plan, price: sub.price, billingCycle: sub.billingCycle as any, status: sub.status as any, nextPayment: sub.nextPaymentRaw ? sub.nextPaymentRaw.toISOString() : null }); setEditOpen(true) }}>{t('edit')}</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handlePauseResume(sub)}>{sub.status==='paused' ? t('resume') : t('pause')}</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => setDeleteConfirmId(sub.id)}>{tCommon('delete')}</DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
       </Card>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={deleteConfirmId !== null} onOpenChange={(open) => { if (!open) setDeleteConfirmId(null) }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{tCommon('delete')} {t('subscription')}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground py-2">{t('deleteConfirm')}</p>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setDeleteConfirmId(null)}>{tCommon('cancel')}</Button>
+            <Button variant="destructive" onClick={handleDeleteConfirmed}>{tCommon('confirm')}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <EditSubscriptionDialog
         row={editRow}
