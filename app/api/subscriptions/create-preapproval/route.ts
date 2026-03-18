@@ -41,7 +41,14 @@ export async function POST(request: Request) {
     const frequencyType = "months"
 
     // Build callback URL
-    const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+    const origin = request.headers.get("origin") ?? process.env.NEXT_PUBLIC_APP_URL
+    if (!origin) {
+      console.error("NEXT_PUBLIC_APP_URL is not configured")
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      )
+    }
     const backUrl = `${origin}/es/app/subscriptions`
 
     // Create MercadoPago preapproval (subscription)

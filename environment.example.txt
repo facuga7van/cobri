@@ -64,3 +64,6 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
 
 # MercadoPago Webhook Secret (from MP Dashboard > Webhooks)
 MP_WEBHOOK_SECRET=your_webhook_secret_here
+
+# App URL (required for payment redirects)
+NEXT_PUBLIC_APP_URL=https://your-domain.com
