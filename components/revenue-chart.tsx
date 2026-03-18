@@ -58,7 +58,7 @@ export default function RevenueChart({ data }: RevenueChartProps) {
           color: chartColors.tooltip.text,
         }}
         labelStyle={{ color: chartColors.tooltip.text }}
-        formatter={(value: number) => [`$${value}`, 'Ingresos']}
+        formatter={(value) => [`$${value}`, 'Ingresos']}
       />
     </>
   )
