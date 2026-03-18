@@ -29,6 +29,10 @@ export {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   updateProfile,
+  sendPasswordResetEmail,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider,
 } from "firebase/auth"
 export { doc, setDoc, serverTimestamp, getDoc } from "firebase/firestore"
 export default app
