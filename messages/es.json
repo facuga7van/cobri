@@ -17,7 +17,8 @@
     "yes": "Sí",
     "no": "No",
     "details": "Detalles",
-    "or": "o"
+    "or": "o",
+    "exportCsv": "Exportar CSV"
   },
   "navigation": {
     "dashboard": "Panel",
