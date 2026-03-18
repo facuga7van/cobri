@@ -64,6 +64,12 @@
     ,"namePlaceholder": "John Doe"
     ,"errorTitle": "Error"
     ,"signInFailed": "Sign in failed"
+    ,"forgotPasswordTitle": "Reset password"
+    ,"forgotPasswordDesc": "Enter your email and we'll send you a link to reset your password"
+    ,"sendResetEmail": "Send reset link"
+    ,"resetEmailSent": "Email sent"
+    ,"resetEmailSentDesc": "Check your inbox to reset your password"
+    ,"sendingEmail": "Sending..."
   },
   "dashboard": {
     "title": "Dashboard",
@@ -179,7 +185,19 @@
     "timezone": "Timezone",
     "overview": "View your account information",
     "joined": "Joined",
-    "currentTheme": "Current theme"
+    "currentTheme": "Current theme",
+    "editProfile": "Edit profile",
+    "profileUpdated": "Profile updated",
+    "displayName": "Name",
+    "changePassword": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "passwordChanged": "Password changed",
+    "passwordMismatch": "Passwords don't match",
+    "wrongPassword": "Current password is incorrect",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "managedByGoogle": "Your password is managed by Google"
   },
   "trial": {
     "active": "Active trial:",

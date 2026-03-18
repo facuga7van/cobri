@@ -64,6 +64,12 @@
     ,"namePlaceholder": "Juan Pérez"
     ,"errorTitle": "Error"
     ,"signInFailed": "Error al iniciar sesión"
+    ,"forgotPasswordTitle": "Recuperar contraseña"
+    ,"forgotPasswordDesc": "Ingresá tu email y te enviaremos un enlace para restablecer tu contraseña"
+    ,"sendResetEmail": "Enviar enlace"
+    ,"resetEmailSent": "Email enviado"
+    ,"resetEmailSentDesc": "Revisá tu bandeja de entrada para restablecer tu contraseña"
+    ,"sendingEmail": "Enviando..."
   },
   "dashboard": {
     "title": "Panel de Control",
@@ -188,7 +194,19 @@
     "timezone": "Zona Horaria",
     "overview": "Consulta la información de tu cuenta",
     "joined": "Alta",
-    "currentTheme": "Tema actual"
+    "currentTheme": "Tema actual",
+    "editProfile": "Editar perfil",
+    "profileUpdated": "Perfil actualizado",
+    "displayName": "Nombre",
+    "changePassword": "Cambiar contraseña",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Nueva contraseña",
+    "confirmNewPassword": "Confirmar nueva contraseña",
+    "passwordChanged": "Contraseña actualizada",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "wrongPassword": "Contraseña actual incorrecta",
+    "passwordTooShort": "La contraseña debe tener al menos 6 caracteres",
+    "managedByGoogle": "Tu contraseña es administrada por Google"
   },
   "trial": {
     "active": "Trial activo:",
