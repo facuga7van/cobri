@@ -30,10 +30,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [loading, user, isPricing, isAuthRoute, isLanding, router, locale])
 
   React.useEffect(() => {
-    if (!loading && user && isAuthRoute) {
-      router.replace(`/${locale}`)
+    if (!loading && user && (isAuthRoute || isLanding)) {
+      router.replace(`/${locale}/app`)
     }
-  }, [loading, user, isAuthRoute, router, locale])
+  }, [loading, user, isAuthRoute, isLanding, router, locale])
 
   React.useEffect(() => {
     if (!user || isUpgradePage) return
