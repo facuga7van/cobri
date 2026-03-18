@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast"
 import { GoogleLoginButton } from "@/components/google-login-button"
 import { useLocale } from "next-intl"
 import { useTranslations } from '@/hooks/use-translations';
+import { ForgotPasswordDialog } from "@/components/forgot-password-dialog"
 
 export default function SignInPage() {
   const router = useRouter()
@@ -25,6 +26,7 @@ export default function SignInPage() {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [oauthLoading, setOauthLoading] = useState(false)
+  const [forgotOpen, setForgotOpen] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -131,6 +133,15 @@ export default function SignInPage() {
               autoComplete="current-password"
             />
           </div>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => setForgotOpen(true)}
+              className="text-sm text-muted-foreground hover:text-primary hover:underline"
+            >
+              {tAuth('forgotPassword', { default: 'Forgot password?' })}
+            </button>
+          </div>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? tAuth('signingIn') : tAuth('signIn')}
           </Button>
@@ -153,6 +164,7 @@ export default function SignInPage() {
           </Link>
         </p>
       </Card>
+      <ForgotPasswordDialog open={forgotOpen} onOpenChange={setForgotOpen} />
     </div>
   )
 }
