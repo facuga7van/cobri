@@ -28,10 +28,10 @@
     "pricing": "Pricing"
   },
   "theme": {
-    "darkMode": "Dark Mode",
-    "lightMode": "Light Mode",
-    "systemMode": "System",
-    "themeDescription": "Switch between light and dark theme"
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggleTheme": "Toggle theme"
   },
   "auth": {
     "signIn": "Sign In",
@@ -161,6 +161,11 @@
     "overview": "View your account information",
     "joined": "Joined",
     "currentTheme": "Current theme"
+  },
+  "trial": {
+    "active": "Active trial:",
+    "daysRemaining": "{daysLeft} days remaining on your free trial",
+    "close": "Close"
   },
   "pricing": {
     "title": "Simple, Transparent Pricing",

@@ -25,7 +25,7 @@ export function ThemeSwitch() {
     <div className="flex items-center justify-between">
       <div>
         <Label htmlFor="theme-switch" className="font-medium pb-2">
-          {t('darkMode')}
+          {t('dark')}
         </Label>
         <Switch
         id="theme-switch"

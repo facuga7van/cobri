@@ -28,10 +28,10 @@
     "pricing": "Precios"
   },
   "theme": {
-    "darkMode": "Modo oscuro",
-    "lightMode": "Modo claro",
-    "systemMode": "Sistema",
-    "themeDescription": "Cambiar entre tema claro y oscuro"
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "toggleTheme": "Cambiar tema"
   },
   "auth": {
     "signIn": "Iniciar sesión",
@@ -170,6 +170,11 @@
     "overview": "Consulta la información de tu cuenta",
     "joined": "Alta",
     "currentTheme": "Tema actual"
+  },
+  "trial": {
+    "active": "Trial activo:",
+    "daysRemaining": "{daysLeft} días restantes de tu prueba gratis",
+    "close": "Cerrar"
   },
   "pricing": {
     "title": "Precios simples y transparentes",

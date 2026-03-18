@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { IconInfoCircle, IconX } from "@tabler/icons-react"
+import { useTranslations } from "next-intl"
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
 import { doc, getDoc, getDocFromServer } from "firebase/firestore"
@@ -22,6 +23,7 @@ function computeDaysLeft(end: Date): number {
 
 export function TrialBanner() {
   const { user } = useAuth()
+  const t = useTranslations('trial')
   const [daysLeft, setDaysLeft] = React.useState<number | null>(null)
   const [status, setStatus] = React.useState<string | null>(null)
   const [dismissed, setDismissed] = React.useState<boolean>(false)
@@ -89,10 +91,10 @@ export function TrialBanner() {
     <div className="bg-info/10 border border-info/20 rounded-lg p-4 flex items-center gap-3">
       <IconInfoCircle className="h-5 w-5 text-info flex-shrink-0" />
       <div className="text-sm flex-1">
-        <span className="font-medium">Trial activo:</span> {daysLeft} días restantes de tu prueba gratis
+        <span className="font-medium">{t('active')}</span> {t('daysRemaining', { daysLeft })}
       </div>
       <button
-        aria-label="Cerrar"
+        aria-label={t('close')}
         className="text-info/80 hover:text-info p-1 rounded hover:bg-info/20"
         onClick={() => {
           setDismissed(true)
