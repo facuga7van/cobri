@@ -29,29 +29,29 @@ export default function PricingPage() {
         </div>
       </nav>
 
-      <div className="container mx-auto px-4 py-20">
+      <div className="container mx-auto px-4 py-20 animate-fade-in-up">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">{t('title')}</h1>
           <p className="text-xl text-muted-foreground">{t('onePlan')}</p>
         </div>
 
-        <Card className="max-w-lg mx-auto p-8">
+        <Card className="max-w-lg mx-auto p-8 card-hover">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold mb-2">Pro</h2>
+            <h2 className="text-2xl font-bold mb-2">{t('pro')}</h2>
             <div className="text-5xl font-bold mb-2">
               $5<span className="text-xl text-muted-foreground">/{t('month')}</span>
             </div>
             <p className="text-muted-foreground">{t('billedMonthly')}</p>
           </div>
 
-          <div className="space-y-3 mb-8">
+          <ul className="space-y-3 mb-8 list-none">
             {[t('unlimitedSubscriptions'), t('customerManagement'), t('revenueTracking'), t('statusMonitoring'), t('emailNotifications'), t('freeTrial'), t('prioritySupport')].map((feature, i) => (
-              <div key={i} className="flex items-center gap-3">
+              <li key={i} className="flex items-center gap-3">
                 <IconCheck className="w-5 h-5 text-success flex-shrink-0" />
                 <span className="text-sm">{feature}</span>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
 
           <Link href={`/${locale}/auth/sign-up`}>
             <Button className="w-full" size="lg">
