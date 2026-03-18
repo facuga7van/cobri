@@ -9,7 +9,8 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { IconSearch, IconPlus } from "@tabler/icons-react"
+import { IconSearch, IconPlus, IconDownload } from "@tabler/icons-react"
+import { downloadCsv } from "@/lib/csv-utils"
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore"
@@ -22,6 +23,7 @@ const NewCustomerDialog = dynamic(() => import("@/components/new-customer-dialog
 export default function CustomersPage() {
   const [search, setSearch] = useState("")
   const t = useTranslations('customers')
+  const tCommon = useTranslations('common')
   const locale = useLocale()
   const { user } = useAuth()
   const [rows, setRows] = useState<Array<{ id: string; name: string; email: string; subscriptions?: number; totalValue?: number }>>([])
@@ -44,6 +46,16 @@ export default function CustomersPage() {
     (c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.email.toLowerCase().includes(search.toLowerCase())
   ), [rows, search])
 
+  function handleExportCsv() {
+    const csvData = rows.map(c => ({
+      Name: c.name,
+      Email: c.email,
+      Subscriptions: c.subscriptions ?? 0,
+      "Total Value": c.totalValue ?? 0,
+    }))
+    downloadCsv(csvData, "cobri-customers")
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-start sm:items-center justify-between gap-3 sm:gap-0 flex-col sm:flex-row">
@@ -51,7 +63,13 @@ export default function CustomersPage() {
           <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
           <p className="text-muted-foreground">{t('manageDescription')}</p>
         </div>
-        <NewCustomerDialog />
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleExportCsv}>
+            <IconDownload className="h-4 w-4 mr-2" />
+            {tCommon('exportCsv')}
+          </Button>
+          <NewCustomerDialog />
+        </div>
       </div>
 
       {/* Search */}
