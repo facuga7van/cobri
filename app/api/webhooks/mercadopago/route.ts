@@ -68,6 +68,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true })
     }
 
+    // Idempotency check: skip if this exact event state was already processed
+    const currentData = subSnap.data()!
+    if (currentData.mercadopagoId === data.id && currentData.mercadopagoStatus === preapprovalData.status) {
+      // Already processed this exact state — skip
+      return NextResponse.json({ received: true, status: currentData.status })
+    }
+
     // Map MercadoPago status to Cobri status
     const mpStatus = preapprovalData.status
     let cobriStatus: string
@@ -109,13 +116,13 @@ export async function POST(request: Request) {
       }
       updateData.nextPayment = nextPayment
 
-      // Add payment record
-      await subRef.collection("payments").add({
+      // Add payment record — use mercadopagoId as document ID for built-in idempotency
+      await subRef.collection("payments").doc(data.id).set({
         date: now,
         amount: subData.price ?? 0,
         source: "mercadopago",
         mercadopagoId: data.id,
-      })
+      }, { merge: true })
 
       // Update customer counters if needed
       if (subData.customerId) {
