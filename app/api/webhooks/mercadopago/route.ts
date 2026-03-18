@@ -3,6 +3,8 @@ import { preApproval, mpWebhookSecret } from "@/lib/mercadopago"
 import { adminDb } from "@/lib/firebase-admin"
 import { FieldValue } from "firebase-admin/firestore"
 import { verifyMercadoPagoSignature } from "@/lib/webhook-verify"
+import { sendEmail } from "@/lib/email"
+import { paymentSuccessEmail, paymentCancelledEmail } from "@/lib/email-templates"
 
 /**
  * MercadoPago Webhook Handler
@@ -169,6 +171,18 @@ export async function POST(request: Request) {
           }
         }
       }
+
+      // Send payment success email to the business owner
+      const userDoc = await adminDb.collection("users").doc(userId).get()
+      const ownerEmail = userDoc.data()?.email
+      const customerName = subData.customerId
+        ? await adminDb.collection("users").doc(userId).collection("customers").doc(subData.customerId).get()
+            .then((snap) => (snap.exists ? (snap.data()?.name ?? "—") : "—"))
+        : "—"
+      if (ownerEmail) {
+        const { subject, html } = paymentSuccessEmail(customerName, subData.plan ?? "—", subData.price ?? 0)
+        await sendEmail({ to: ownerEmail, subject, html })
+      }
     }
 
     // If cancelled, decrement customer MRR
@@ -187,6 +201,17 @@ export async function POST(request: Request) {
         await customerRef.update({
           totalValue: FieldValue.increment(-monthlyValue),
         })
+      }
+
+      // Send cancellation email to the business owner
+      const userDocCancel = await adminDb.collection("users").doc(userId).get()
+      const ownerEmailCancel = userDocCancel.data()?.email
+      if (ownerEmailCancel && subData.customerId) {
+        const customerRefCancel = adminDb.collection("users").doc(userId).collection("customers").doc(subData.customerId)
+        const customerSnapCancel = await customerRefCancel.get()
+        const custName = customerSnapCancel.exists ? (customerSnapCancel.data()?.name ?? "—") : "—"
+        const { subject, html } = paymentCancelledEmail(custName, subData.plan ?? "—")
+        await sendEmail({ to: ownerEmailCancel, subject, html })
       }
     }
 

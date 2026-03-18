@@ -82,3 +82,6 @@ NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
 # MercadoPago (access keys from MP Dashboard > Credentials)
 NEXT_PUBLIC_MP_PUBLIC_KEY=TEST-your-mp-public-key
 MP_ACCESS_TOKEN=TEST-your-mp-access-token
+
+# Resend (email notifications)
+RESEND_API_KEY=re_your_resend_api_key
