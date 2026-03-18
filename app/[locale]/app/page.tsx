@@ -16,7 +16,11 @@ import { collection, getDocs } from "firebase/firestore"
 const RevenueChart = dynamic(() => import('@/components/revenue-chart'), {
   loading: () => (
     <div className="h-[300px] flex items-center justify-center">
-      <div className="text-sm text-muted-foreground">...</div>
+      <div className="animate-pulse space-y-4 w-full px-8">
+        <div className="h-4 bg-muted rounded w-1/4" />
+        <div className="h-48 bg-muted rounded" />
+        <div className="h-4 bg-muted rounded w-3/4" />
+      </div>
     </div>
   ),
   ssr: false
@@ -139,7 +143,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in-up">
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold mb-2">{t('title')}</h1>
@@ -160,20 +164,24 @@ export default function DashboardPage() {
         <KpiCard
           title={t('activeSubscriptions')}
           value={kpis.activeSubscriptions}
+          className="animate-fade-in-up stagger-1 card-hover"
         />
         <KpiCard
           title={t('monthlyRecurring')}
           value={`$${kpis.mrr.toFixed(2)}`}
+          className="animate-fade-in-up stagger-2 card-hover"
         />
         <KpiCard
           title={t('newThisMonth')}
           value={kpis.newThisMonth}
+          className="animate-fade-in-up stagger-3 card-hover"
         />
         <KpiCard
           title={t('growth')}
           value={`${kpis.growth}%`}
           delta={Math.abs(kpis.growth)}
           trend={kpis.growth >= 0 ? 'up' : 'down'}
+          className="animate-fade-in-up stagger-4 card-hover"
         />
       </div>
 
@@ -213,7 +221,7 @@ export default function DashboardPage() {
               </thead>
               <tbody>
                 {kpis.upcomingCharges.map((charge) => (
-                  <tr key={charge.id} className="border-b border-border last:border-0">
+                  <tr key={charge.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
                     <td className="p-3 text-sm font-medium">{charge.customerName}</td>
                     <td className="p-3 text-sm text-muted-foreground">{charge.plan}</td>
                     <td className="p-3 text-sm font-medium">${charge.amount}</td>

@@ -6,11 +6,12 @@ interface KpiCardProps {
   value: string | number
   delta?: number
   trend?: "up" | "down"
+  className?: string
 }
 
-export function KpiCard({ title, value, delta, trend }: KpiCardProps) {
+export function KpiCard({ title, value, delta, trend, className }: KpiCardProps) {
   return (
-    <Card className="p-6">
+    <Card className={`p-6${className ? ` ${className}` : ''}`}>
       <div className="flex items-center justify-between mb-2">
         <p className="text-sm text-muted-foreground">{title}</p>
         {delta !== undefined && (
