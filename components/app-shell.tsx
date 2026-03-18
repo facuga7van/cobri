@@ -8,6 +8,9 @@ import { useAuth } from "@/components/auth-provider"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider, Sidebar, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { TrialBanner } from "@/components/trial-banner"
+import { db } from "@/lib/firebase"
+import { doc, getDoc } from "firebase/firestore"
+import { isTrialExpired, isPaidUser } from "@/lib/trial-utils"
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -17,6 +20,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   const isPricing = pathname === `/${locale}/pricing`
   const isAuthRoute = pathname?.startsWith(`/${locale}/auth`)
+  const isUpgradePage = pathname === `/${locale}/app/upgrade`
 
   React.useEffect(() => {
     if (!loading && !user && !isPricing && !isAuthRoute) {
@@ -29,6 +33,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       router.replace(`/${locale}`)
     }
   }, [loading, user, isAuthRoute, router, locale])
+
+  React.useEffect(() => {
+    if (!user || isUpgradePage) return
+    ;(async () => {
+      const ref = doc(db, 'users', user.uid)
+      const snap = await getDoc(ref)
+      if (!snap.exists()) return
+      const data = snap.data() as any
+      const status = data?.subscriptionStatus ?? null
+      const trialEnd = data?.trialEndsAt
+
+      if (isTrialExpired(status, trialEnd) && !isPaidUser(status)) {
+        router.replace(`/${locale}/app/upgrade`)
+      }
+    })()
+  }, [user, pathname, locale, router, isUpgradePage])
 
   if (loading) return null
 
