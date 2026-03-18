@@ -162,7 +162,8 @@
     "goBack": "Go back",
     "customerDeleted": "Customer deleted",
     "customerUpdated": "Customer updated",
-    "notes": "Notes"
+    "notes": "Notes",
+    "noResults": "No customers match your search"
   },
   "payments": {
     "title": "Payment History",

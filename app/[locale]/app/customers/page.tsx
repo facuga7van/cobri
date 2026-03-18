@@ -27,6 +27,7 @@ export default function CustomersPage() {
   const locale = useLocale()
   const { user } = useAuth()
   const [rows, setRows] = useState<Array<{ id: string; name: string; email: string; subscriptions?: number; totalValue?: number }>>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!user) return
@@ -38,6 +39,7 @@ export default function CustomersPage() {
         list.push({ id: d.id, name: data.name ?? '', email: data.email ?? '', subscriptions: data.subscriptions ?? 0, totalValue: data.totalValue ?? 0 })
       })
       setRows(list)
+      setLoading(false)
     })
     return () => unsub()
   }, [user])
@@ -85,42 +87,62 @@ export default function CustomersPage() {
         </div>
       </Card>
 
+      {/* Loading Skeleton */}
+      {loading && (
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="p-4 animate-pulse">
+              <div className="h-12 bg-muted rounded mb-4" />
+              <div className="h-4 bg-muted rounded w-3/4 mb-2" />
+              <div className="h-4 bg-muted rounded w-1/2" />
+            </Card>
+          ))}
+        </div>
+      )}
+
       {/* Customer Grid */}
-      <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {filteredCustomers.map((customer) => (
-          <Card key={customer.id} className="p-6">
-            <div className="flex items-start gap-4">
-              <Avatar>
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {customer.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold truncate">{customer.name}</h3>
-                <p className="text-sm text-muted-foreground truncate">{customer.email}</p>
-                <div className="mt-3 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-muted-foreground">{t('subscriptions')}</p>
-                    <p className="text-sm font-medium">{customer.subscriptions ?? 0}</p>
+      {!loading && (
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {filteredCustomers.map((customer) => (
+            <Card key={customer.id} className="p-6 card-hover animate-fade-in-up">
+              <div className="flex items-start gap-4">
+                <Avatar>
+                  <AvatarFallback className="bg-primary text-primary-foreground">
+                    {customer.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold truncate">{customer.name}</h3>
+                  <p className="text-sm text-muted-foreground truncate">{customer.email}</p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-muted-foreground">{t('subscriptions')}</p>
+                      <p className="text-sm font-medium">{customer.subscriptions ?? 0}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">{t('totalValue')}</p>
+                      <p className="text-sm font-medium">${customer.totalValue ?? 0}/mo</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">{t('totalValue')}</p>
-                    <p className="text-sm font-medium">${customer.totalValue ?? 0}/mo</p>
+                  <div className="mt-4">
+                    <Link href={`/${locale}/app/customers/${customer.id}`}>
+                      <Button className="pointer w-full sm:w-auto" size="sm" variant="outline">{t('details')}</Button>
+                    </Link>
                   </div>
-                </div>
-                <div className="mt-4">
-                  <Link href={`/${locale}/app/customers/${customer.id}`}>
-                    <Button className="pointer w-full sm:w-auto" size="sm" variant="outline">{t('details')}</Button>
-                  </Link>
                 </div>
               </div>
+            </Card>
+          ))}
+          {filteredCustomers.length === 0 && search && (
+            <div className="col-span-full text-center py-12 text-muted-foreground">
+              <p>{t('noResults')}</p>
             </div>
-          </Card>
-        ))}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

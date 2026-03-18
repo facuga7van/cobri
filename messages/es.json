@@ -171,7 +171,8 @@
     "goBack": "Volver",
     "customerDeleted": "Cliente eliminado",
     "customerUpdated": "Cliente actualizado",
-    "notes": "Notas"
+    "notes": "Notas",
+    "noResults": "Ningún cliente coincide con tu búsqueda"
   },
   "payments": {
     "title": "Historial de Pagos",
