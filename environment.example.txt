@@ -67,3 +67,18 @@ MP_WEBHOOK_SECRET=your_webhook_secret_here
 
 # App URL (required for payment redirects)
 NEXT_PUBLIC_APP_URL=https://your-domain.com
+
+# ============================================
+# GOOGLE OAUTH CONFIGURATION
+# ============================================
+
+# Google OAuth (for Google Sign-In button)
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
+
+# ============================================
+# MERCADOPAGO CREDENTIALS
+# ============================================
+
+# MercadoPago (access keys from MP Dashboard > Credentials)
+NEXT_PUBLIC_MP_PUBLIC_KEY=TEST-your-mp-public-key
+MP_ACCESS_TOKEN=TEST-your-mp-access-token
