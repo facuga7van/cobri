@@ -39,14 +39,14 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="container mx-auto px-4 py-20 text-center">
+      <section className="container mx-auto px-4 py-20 md:py-28 text-center animate-fade-in-up">
         <h1 className="text-4xl md:text-5xl font-bold mb-6 max-w-3xl mx-auto leading-tight">
           {t('hero')}
         </h1>
         <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
           {t('heroSub')}
         </p>
-        <div className="flex gap-4 justify-center">
+        <div className="flex gap-4 justify-center animate-fade-in-up" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
           <Link href={`/${locale}/auth/sign-up`}>
             <Button size="lg">{t('cta')}</Button>
           </Link>
@@ -57,10 +57,10 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="container mx-auto px-4 py-16">
+      <section className="container mx-auto px-4 py-16 animate-fade-in">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {features.map((f, i) => (
-            <Card key={i} className="p-6 text-center">
+            <Card key={i} className={`p-6 text-center card-hover animate-fade-in-up stagger-${i + 1}`}>
               <f.icon className="h-10 w-10 mx-auto mb-4 text-primary" />
               <h3 className="font-semibold mb-2">{f.title}</h3>
               <p className="text-sm text-muted-foreground">{f.desc}</p>
