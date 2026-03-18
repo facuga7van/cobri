@@ -226,5 +226,19 @@
     "prioritySupport": "Priority support",
     "noCard": "No credit card required for trial",
     "month": "month"
+  },
+  "upgrade": {
+    "title": "Upgrade to Pro",
+    "subtitle": "Your free trial has expired. Subscribe to continue using Cobri.",
+    "trialExpired": "Trial expired",
+    "subscribePro": "Subscribe to Pro",
+    "priceLabel": "$5/month",
+    "subscribing": "Redirecting to MercadoPago...",
+    "errorSubscribing": "Error creating subscription",
+    "currentPlan": "Current plan",
+    "trialDaysLeft": "Trial ({days} days remaining)",
+    "trialExpiredLabel": "Trial expired",
+    "proPlan": "Pro",
+    "upgradeNow": "Upgrade now"
   }
 }

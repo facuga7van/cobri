@@ -235,5 +235,19 @@
     "prioritySupport": "Soporte prioritario",
     "noCard": "No se requiere tarjeta de crédito para la prueba",
     "month": "mes"
+  },
+  "upgrade": {
+    "title": "Actualizá a Pro",
+    "subtitle": "Tu prueba gratuita expiró. Suscribite para seguir usando Cobri.",
+    "trialExpired": "Prueba expirada",
+    "subscribePro": "Suscribirse a Pro",
+    "priceLabel": "$5/mes",
+    "subscribing": "Redirigiendo a MercadoPago...",
+    "errorSubscribing": "Error al crear la suscripción",
+    "currentPlan": "Plan actual",
+    "trialDaysLeft": "Trial ({days} días restantes)",
+    "trialExpiredLabel": "Trial expirado",
+    "proPlan": "Pro",
+    "upgradeNow": "Actualizar ahora"
   }
 }
