@@ -8,7 +8,8 @@ import { StatusBadge } from "@/components/status-badge"
 import { IconArrowLeft, IconMail, IconCalendar } from "@tabler/icons-react"
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
-import { doc, getDoc, updateDoc, addDoc, collection, serverTimestamp } from "firebase/firestore"
+import { doc, getDoc, updateDoc, addDoc, collection, serverTimestamp, query, orderBy, onSnapshot } from "firebase/firestore"
+import { PaymentHistoryTable, PaymentRecord } from "@/components/payment-history-table"
 import { useTranslations } from '@/hooks/use-translations';
 import { useToast } from "@/hooks/use-toast"
 
@@ -34,6 +35,8 @@ export default function SubscriptionDetailPage({ params }: { params: { id: strin
     nextPayment?: string | null
     lastPayment?: string | null
   } | null>(null)
+  const [payments, setPayments] = useState<PaymentRecord[]>([])
+  const [loadingPayments, setLoadingPayments] = useState(true)
 
   useEffect(() => {
     if (!user) return
@@ -75,6 +78,36 @@ export default function SubscriptionDetailPage({ params }: { params: { id: strin
     })()
   }, [user, params.id])
 
+  useEffect(() => {
+    if (!user) return
+    const q = query(
+      collection(db, 'users', user.uid, 'subscriptions', params.id, 'payments'),
+      orderBy('date', 'desc')
+    )
+    const unsub = onSnapshot(q, (snap) => {
+      const list: PaymentRecord[] = []
+      snap.forEach((d) => {
+        const data = d.data() as any
+        const rawDate = data.date ?? data.paidAt
+        let date: Date
+        if (rawDate?.toDate) date = rawDate.toDate()
+        else if (rawDate?.seconds) date = new Date(rawDate.seconds * 1000)
+        else date = rawDate ? new Date(rawDate) : new Date()
+
+        list.push({
+          id: d.id,
+          date,
+          amount: data.amount ?? 0,
+          source: data.source ?? 'manual',
+          mercadopagoId: data.mercadopagoId,
+        })
+      })
+      setPayments(list)
+      setLoadingPayments(false)
+    })
+    return () => unsub()
+  }, [user, params.id])
+
   if (loading) return <div className="p-6 text-sm text-muted-foreground">{tCommon('loading')}</div>
   if (notFound || !sub) return <div className="p-6 text-sm text-muted-foreground">{t('notFound', { default: 'Subscription not found' })}</div>
 
@@ -104,8 +137,10 @@ export default function SubscriptionDetailPage({ params }: { params: { id: strin
 
     await addDoc(collection(db, 'users', user.uid, 'subscriptions', params.id, 'payments'), {
       paidAt: serverTimestamp(),
+      date: serverTimestamp(),
       amount: data.price ?? null,
       coveredUntil: baseDate,
+      source: "manual",
     })
     await updateDoc(subRef, {
       lastPayment: serverTimestamp(),
@@ -176,6 +211,11 @@ export default function SubscriptionDetailPage({ params }: { params: { id: strin
           </div>
         </Card>
       </div>
+
+      <PaymentHistoryTable
+        payments={payments}
+        loading={loadingPayments}
+      />
     </div>
   )
 }
