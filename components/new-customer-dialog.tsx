@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
 import { addDoc, collection, serverTimestamp } from "firebase/firestore"
+import { toTitleCase } from "@/lib/string-utils"
 
 export function NewCustomerDialog() {
   const t = useTranslations('customers')
@@ -23,9 +24,6 @@ export function NewCustomerDialog() {
   const [name, setName] = React.useState("")
   const [email, setEmail] = React.useState("")
   const [saving, setSaving] = React.useState(false)
-
-  const toTitleCase = React.useCallback((s: string) =>
-    s.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '), [] )
 
   async function handleSave(e?: React.FormEvent) {
     if (e) e.preventDefault()

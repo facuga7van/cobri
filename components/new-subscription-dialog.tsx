@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogT
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/components/auth-provider"
 import { db } from "@/lib/firebase"
+import { toTitleCase } from "@/lib/string-utils"
 import {
   collection,
   addDoc,
@@ -119,15 +120,6 @@ export function NewSubscriptionDialog() {
     if (!user) return
     setSaving(true)
     try {
-      const toTitleCase = (s: string) =>
-        s
-          .replace(/\s+/g, ' ')
-          .trim()
-          .split(' ')
-          .filter(Boolean)
-          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-          .join(' ')
-
       // Create customer if needed under users/{uid}/customers
       let customerId = selectedCustomerId
       if (mode === 'new') {
