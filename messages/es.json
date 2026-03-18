@@ -155,7 +155,26 @@
     "subscriptions": "Suscripciones",
     "searchCustomersPlaceholder": "Buscar clientes...",
     "customerCreated": "Cliente creado",
-    "notFound": "Cliente no encontrado"
+    "notFound": "Cliente no encontrado",
+    "editCustomer": "Editar Cliente",
+    "deleteCustomer": "Eliminar Cliente",
+    "confirmDelete": "¿Estás seguro de que querés eliminar este cliente?",
+    "confirmDeleteWithSubs": "Este cliente tiene {count} suscripciones activas. Cancelarlas detendrá los cobros asociados. ¿Cancelar todo y eliminar?",
+    "cancelAllAndDelete": "Cancelar todo y eliminar",
+    "goBack": "Volver",
+    "customerDeleted": "Cliente eliminado",
+    "customerUpdated": "Cliente actualizado",
+    "notes": "Notas"
+  },
+  "payments": {
+    "title": "Historial de Pagos",
+    "date": "Fecha",
+    "amount": "Monto",
+    "source": "Origen",
+    "subscription": "Suscripción",
+    "manual": "Manual",
+    "mercadopago": "MercadoPago",
+    "noPayments": "No hay pagos registrados aún"
   },
   "settings": {
     "title": "Configuración",

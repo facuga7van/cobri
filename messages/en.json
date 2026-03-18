@@ -146,7 +146,26 @@
     "subscriptions": "Subscriptions",
     "searchCustomersPlaceholder": "Search customers...",
     "customerCreated": "Customer created",
-    "notFound": "Customer not found"
+    "notFound": "Customer not found",
+    "editCustomer": "Edit Customer",
+    "deleteCustomer": "Delete Customer",
+    "confirmDelete": "Are you sure you want to delete this customer?",
+    "confirmDeleteWithSubs": "This customer has {count} active subscriptions. Cancelling them will stop all associated charges. Cancel all and delete?",
+    "cancelAllAndDelete": "Cancel all and delete",
+    "goBack": "Go back",
+    "customerDeleted": "Customer deleted",
+    "customerUpdated": "Customer updated",
+    "notes": "Notes"
+  },
+  "payments": {
+    "title": "Payment History",
+    "date": "Date",
+    "amount": "Amount",
+    "source": "Source",
+    "subscription": "Subscription",
+    "manual": "Manual",
+    "mercadopago": "MercadoPago",
+    "noPayments": "No payments recorded yet"
   },
   "settings": {
     "title": "Settings",
