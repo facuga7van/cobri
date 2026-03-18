@@ -1,4 +1,4 @@
-import { createHmac } from "crypto"
+import { createHmac, timingSafeEqual } from "crypto"
 
 /**
  * Verifies MercadoPago webhook signature.
@@ -31,5 +31,9 @@ export function verifyMercadoPagoSignature(
   hmac.update(manifest)
   const generatedHash = hmac.digest("hex")
 
-  return generatedHash === v1
+  try {
+    return timingSafeEqual(Buffer.from(generatedHash), Buffer.from(v1))
+  } catch {
+    return false
+  }
 }

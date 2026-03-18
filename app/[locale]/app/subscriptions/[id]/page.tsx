@@ -119,7 +119,7 @@ export default function SubscriptionDetailPage({ params }: { params: { id: strin
   return (
     <div className="space-y-6">
       <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-col sm:flex-row">
-        <Link href={`/${params.locale}/subscriptions`}>
+        <Link href={`/${params.locale}/app/subscriptions`}>
           <Button variant="ghost" size="sm">
             <IconArrowLeft className="h-4 w-4 mr-2" />
             {tCommon('back')}

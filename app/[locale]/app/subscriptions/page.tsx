@@ -254,7 +254,7 @@ export default function SubscriptionsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.push(`/${locale}/subscriptions/${sub.id}`)}>{tCommon('details') ?? 'Details'}</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/${locale}/app/subscriptions/${sub.id}`)}>{tCommon('details') ?? 'Details'}</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleMarkPaid(sub)}>{t('markPaid')}</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => { setEditRow({ id: sub.id, customerId: sub.customerId || '', plan: sub.plan, price: sub.price, billingCycle: sub.billingCycle as any, status: sub.status as any, nextPayment: sub.nextPaymentRaw ? sub.nextPaymentRaw.toISOString() : null }); setEditOpen(true) }}>{t('edit', { default: 'Edit' })}</DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handlePauseResume(sub)}>{sub.status==='paused' ? (t('resume',{default:'Resume'})) : (t('pause',{default:'Pause'}))}</DropdownMenuItem>

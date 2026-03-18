@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server"
-import { preApproval } from "@/lib/mercadopago"
-import { mpWebhookSecret } from "@/lib/mercadopago"
+import { preApproval, mpWebhookSecret } from "@/lib/mercadopago"
 import { adminDb } from "@/lib/firebase-admin"
 import { FieldValue } from "firebase-admin/firestore"
 import { verifyMercadoPagoSignature } from "@/lib/webhook-verify"

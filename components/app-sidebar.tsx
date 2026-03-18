@@ -20,9 +20,9 @@ export function AppSidebar() {
 
   const navigation = [
     { name: t('dashboard'), href: `/${locale}`, icon: IconLayoutDashboard },
-    { name: t('subscriptions'), href: `/${locale}/subscriptions`, icon: IconReceipt },
-    { name: t('customers'), href: `/${locale}/customers`, icon: IconUsers },
-    { name: t('settings'), href: `/${locale}/settings`, icon: IconSettings },
+    { name: t('subscriptions'), href: `/${locale}/app/subscriptions`, icon: IconReceipt },
+    { name: t('customers'), href: `/${locale}/app/customers`, icon: IconUsers },
+    { name: t('settings'), href: `/${locale}/app/settings`, icon: IconSettings },
   ]
 
   return (

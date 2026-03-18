@@ -94,7 +94,7 @@ export default function CustomersPage() {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <Link href={`/${locale}/customers/${customer.id}`}>
+                  <Link href={`/${locale}/app/customers/${customer.id}`}>
                     <Button className="pointer w-full sm:w-auto" size="sm" variant="outline">{t('details')}</Button>
                   </Link>
                 </div>
